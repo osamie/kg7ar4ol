@@ -15,43 +15,26 @@ import java.net.SocketException;
 class Listener {
 	private ServerSocket serverSocket;
     Socket clientSocket;
-	PrintWriter out;
-	BufferedReader in;
 	
 	public Listener(int port) {
 		serverSocket = null;
 		try {
-			serverSocket = new ServerSocket(1234);
+			serverSocket = new ServerSocket(port);
 		} catch (IOException e) {
            e.printStackTrace(System.err);
            System.exit(1);
 		}
 	}
 	
+	//Continually listen for new client connection requests 
 	public void listen(){
-		
-		String msg;
-		
-		try {
-			clientSocket = serverSocket.accept(); //accept connection from admin client 
-			out = new PrintWriter(clientSocket.getOutputStream(), true);
-			in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-			
-			while ( (msg = in.readLine()) != null) 
-			{
-				//TODO create a worker thread 
-				System.out.println ("Server Rxd: " + msg );
-				out.println("Echo " + msg);
-			}
-
-			in.close();
-			out.close();
-			clientSocket.close();
-			serverSocket.close();
-      
-		} catch (SocketException e2) { System.out.println("Done"); System.exit(0); }
-		catch (IOException e) { e.printStackTrace(System.err); System.exit(1);  }
+		while(true){
+			try {
+				clientSocket = serverSocket.accept(); //accept connection from ADMIN client 	
+				new Worker(clientSocket); //assign a worker thread to server new client
+			} catch (SocketException e2) { System.out.println("Done"); System.exit(0); }
+			catch (IOException e) { e.printStackTrace(System.err); System.exit(1);  }
+		}
 	}
 	public void finalize()
 	{
@@ -59,6 +42,37 @@ class Listener {
 	}
 }
 
-class ListenerWorker extends Thread{
+/*Each worker is responsible for accepting ADMIN messages*/
+class Worker extends Thread{
+	PrintWriter outToClient;
+	BufferedReader in;
+	Socket clientSocket;
+	
+	
+	public Worker(Socket socket) {
+		/*
+		 * TODO check for any referencing issues 
+		 * - reassignment of clientSocket variable in Listener.listen()
+		 */
+		clientSocket = socket;
+	}
+	
+	@Override
+	public void run() {
+		try {
+			outToClient = new PrintWriter(clientSocket.getOutputStream(), true);
+			in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			outToClient.println("Connected"); //notify admin client that it is now connected
+			
+			in.close();
+			outToClient.close();
+		} catch (SocketException e2) { System.out.println("Done"); System.exit(0); }
+		catch (IOException e) { e.printStackTrace(System.err); System.exit(1);  }
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		clientSocket.close();
+	}
 	
 }

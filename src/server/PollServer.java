@@ -8,11 +8,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
+import javax.sql.rowset.Joinable;
+
 /*
  * Listener is a TCP server where each worker accepts the admin messages
  */
 public class PollServer {
-	public static final int ADMIN_PORT = 1244;
+	public static final int ADMIN_PORT = 5000;
 	public static final int VOTING_PORT = 1122;
 	
 	public PollServer() {
@@ -20,23 +22,37 @@ public class PollServer {
 	}
 	
 	public void startListeners(){
-		new ListenerThread().start();
-		new VoteListenerThread().start();		
+		Thread admin = new ListenerThread();
+		Thread t = new VoteListenerThread();
+		admin.start();
+		t.start();
+		
+		try {
+			admin.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static void main(String[] args) {
+		new PollServer().startListeners();
 	}
 }
 
-/*Listen for ADMIN client connections */
+/*Initialize a Listener for ADMIN client connections */
 class ListenerThread extends Thread{
 	@Override
 	public void run() {
-		new Listener(PollServer.ADMIN_PORT).listen();
+		new AdminListener(PollServer.ADMIN_PORT).listen();
 	}
 }
 
-/*Listen for votes*/
+/*Initialize a listener for other clients - voters */
 class VoteListenerThread extends Thread{
 	@Override
 	public void run() {
-		VoteListener voteListener = new VoteListener();
+		new VoteListener();
 	}
 }

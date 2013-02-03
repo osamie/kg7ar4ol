@@ -10,13 +10,13 @@ import java.net.SocketException;
 
 
 /*
- * Listener is a TCP server where each worker accepts the admin messages
+ * AdminListener is a TCP server where each worker accepts the admin messages
  */
-class Listener {
+class AdminListener {
 	private ServerSocket serverSocket;
     Socket clientSocket;
 	
-	public Listener(int port) {
+	public AdminListener(int port) {
 		serverSocket = null;
 		try {
 			serverSocket = new ServerSocket(port);
@@ -30,8 +30,10 @@ class Listener {
 	public void listen(){
 		while(true){
 			try {
-				clientSocket = serverSocket.accept(); //accept connection from ADMIN client 	
-				new Worker(clientSocket); //assign a worker thread to server new client
+				System.out.println("listening");
+				clientSocket = serverSocket.accept(); //accept connection from ADMIN client
+				System.out.println("connected");
+				new AdminWorker(clientSocket); //assign a worker thread to server new client
 			} catch (SocketException e2) { System.out.println("Done"); System.exit(0); }
 			catch (IOException e) { e.printStackTrace(System.err); System.exit(1);  }
 		}
@@ -42,14 +44,14 @@ class Listener {
 	}
 }
 
-/*Each worker is responsible for accepting ADMIN messages*/
-class Worker extends Thread{
+/*Each AdminWorker is responsible for handling/serving each connected ADMIN's requests/messages*/
+class AdminWorker extends Thread{
 	PrintWriter outToClient;
 	BufferedReader in;
 	Socket clientSocket;
 	
 	
-	public Worker(Socket socket) {
+	public AdminWorker(Socket socket) {
 		/*
 		 * TODO check for any referencing issues 
 		 * - reassignment of clientSocket variable in Listener.listen()

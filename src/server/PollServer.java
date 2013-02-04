@@ -16,7 +16,7 @@ import javax.sql.rowset.Joinable;
 public class PollServer {
 	public static final int ADMIN_PORT = 5000;
 	public static final int VOTING_PORT = 1122;
-	
+
 	public PollServer() {
 	
 	}
@@ -53,6 +53,6 @@ class ListenerThread extends Thread{
 class VoteListenerThread extends Thread{
 	@Override
 	public void run() {
-		new VoteListener();
+		new VoteListener(PollServer.VOTING_PORT);
 	}
 }

@@ -8,8 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
-
-/*
+/**
  * AdminListener is a TCP server where each worker accepts the admin messages
  */
 class AdminListener {
@@ -77,8 +76,14 @@ class AdminWorker extends Thread{
 	public void run() {
 		//send the admin client a connection confirmation with its AdminId   
 		
-		outToClient.println("You are now connected as: " + clientSocket.getLocalAddress().toString()); 
+		/*
+		 * TODO
+		 * Provide the connected AdminClient with an adminID
+		 */
 		
+//		outToClient.println("**You are now connected as: " + clientSocket.getLocalSocketAddress().toString() + "**"); 
+		
+		System.out.println("**You are now connected as: " + clientSocket.getPort() + "**");
 		while(clientSocket.isConnected()){
 			//listen for any request from AdminClient
 			try {
@@ -104,6 +109,21 @@ class AdminWorker extends Thread{
 	private void processRequest(String request){
 		//TODO parse string
 		System.out.println("received request: " + request);
+		
+		/*
+		 * TODO
+		 * if request is createPoll
+		 *  { //generate pollID 
+		 *    //using java.util.uuid or APACHE lib
+		 * 		import java.util.UUID;
+				String uuid = UUID.randomUUID().toString();
+				System.out.println("uuid = " + uuid);
+				
+				//Apache lib
+				org.apache.commons.lang.RandomStringUtils
+			}
+		 *  
+		 */
 	}
 	
 	@Override

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -18,6 +19,7 @@ public class AdminClient {
 	BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 	private int numOfPolls;
 	private int polls[] = new int[10];
+	private long adminID = 0;
 	
 
 	/**
@@ -30,6 +32,7 @@ public class AdminClient {
 		try {
 			// Bind a socket to any available port on the local host machine. 
 			streamSocket = new Socket("127.0.0.1", portNum);
+			
 		} catch (UnknownHostException e1) {
 			System.err.println("Don't know about host");
 			System.exit(1);
@@ -46,6 +49,25 @@ public class AdminClient {
 		} 
 	
 	
+	}
+	
+	public void myIPAddresses(){
+		InetAddress[] localaddr;
+
+        try {
+            localaddr = InetAddress.getAllByName("host.name");
+
+            for(int i = 0;i<localaddr.length;i++){
+
+                System.out.println("\n" + localaddr[i].getHostAddress());
+
+            }
+
+
+        } catch (UnknownHostException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 	}
 	
 	/**
@@ -240,8 +262,8 @@ public class AdminClient {
 		        System.exit(1);
 		    }
 		}
-		AdminClient myPoll = new AdminClient(port);		
-//		myPoll.testCreatePoll();
+		AdminClient myPoll = new AdminClient(port);
+//		myPoll.myIPAddresses();
 		while(myPoll.streamSocket.isConnected()){
 			
 			System.out.print("\nSend Request: ");

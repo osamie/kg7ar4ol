@@ -154,10 +154,9 @@ public class AdminClient {
 	 * @return isValidInput
 	 */
 	public boolean processUserInput(String str){
-		String [] array = str.split("::",1);
+		String [] array = str.split("::");
 		int method;
 		String []args;
-		
 		if(array.length < 2) return false;
 		try{
 			method = Integer.parseInt(array[0]);
@@ -169,7 +168,7 @@ public class AdminClient {
 		
 		switch (method) {
 		case 0:{ 
-			System.out.println("herre");
+			
 			//connect(String numOfOptions, String emailAddress)
 			if(args.length < 2){
 				System.out.println("invalid connect arguments...USAGE:'0::5,osamie2002@gmail.com'");

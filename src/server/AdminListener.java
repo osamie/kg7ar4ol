@@ -26,11 +26,15 @@ class AdminListener {
 		}
 	}
 	
-	//Continually listen for new client connection requests 
+	
+	/**
+	 *Listen for new client connection requests and spawns a new AdminWorker thread
+	 *for every new connection 
+	 */
 	public void listen(){
 		while(true){
 			try {
-				System.out.println("listening");
+				System.out.println("listening...");
 				clientSocket = serverSocket.accept(); //accept connection from ADMIN client
 				
 				
@@ -46,7 +50,10 @@ class AdminListener {
 	}
 }
 
-/*Each AdminWorker is responsible for handling/serving each connected ADMIN's requests/messages*/
+/**
+ *  Each AdminWorker is responsible for handling/serving each connected 
+ *  ADMIN's requests/messages
+ */
 class AdminWorker extends Thread{
 	PrintWriter outToClient;
 	BufferedReader in;
@@ -69,13 +76,34 @@ class AdminWorker extends Thread{
 	@Override
 	public void run() {
 		//send the admin client a connection confirmation with its AdminId   
+		
 		outToClient.println("You are now connected as: " + clientSocket.getLocalAddress().toString()); 
 		
 		while(clientSocket.isConnected()){
-			
-			
+			//listen for any request from AdminClient
+			try {
+				String str = in.readLine();
+				if (str==null){
+					System.out.println("Admin client disconnected");
+					break;
+				}
+				this.processRequest(str);
+			} catch (IOException e) {
+				//TODO handle problem reading input
+				continue;
+			}
 		}
 		
+	}
+	
+	/**
+	 * Parses the string to determine the admin's actual request and to get 
+	 * the request arguments if any.
+	 * @param request
+	 */
+	private void processRequest(String request){
+		//TODO parse string
+		System.out.println("received request: " + request);
 	}
 	
 	@Override

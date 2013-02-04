@@ -69,7 +69,7 @@ public class AdminClient {
 		try {
 			String fromServer = in.readLine();
 			System.out.println("Server: " + fromServer);
-			id = Integer.decode(fromServer);
+//			id = Integer.decode(fromServer);
 			
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
@@ -148,6 +148,64 @@ public class AdminClient {
 		outToServer.println(msgToSend);
 	}
 	
+	/**
+	 * string format is methodName::arg1,agr2....
+	 * @param str
+	 * @return isValidInput
+	 */
+	public boolean processUserInput(String str){
+		String [] array = str.split("::",1);
+		int method;
+		String []args;
+		
+		if(array.length < 2) return false;
+		try{
+			method = Integer.parseInt(array[0]);
+			args = array[1].split(","); //get the arguments for the function
+		}catch(Exception e){
+			System.out.println("does not recognise the method call");
+			return false;
+		}
+		
+		switch (method) {
+		case 0:{ 
+			System.out.println("herre");
+			//connect(String numOfOptions, String emailAddress)
+			if(args.length < 2){
+				System.out.println("invalid connect arguments...USAGE:'0::5,osamie2002@gmail.com'");
+				return false;
+			}
+			connect(args[0], args[1]);
+			return true;
+		}
+		case 1:{
+			//startPoll(String pollID)
+			startPoll(args[0]);
+			return true;
+		}
+		case 2:{
+			//pausePoll(String pollID)
+			pausePoll(args[0]);
+			return true;
+		}
+		case 3:{
+			//stopPoll(String pollID)
+			return true;
+		}
+		case 4:{
+			//clearPoll(String pollID)
+			return true;
+		}
+		case 5:{
+			//resumePoll(String pollID)
+			return true;
+		}
+
+		default:
+			return false;
+		}
+		
+	}
 	
 	public void testConnect(){
 		connect("5","mock@mockdomain.ca");
@@ -218,9 +276,9 @@ public class AdminClient {
 	 */
 	public static void main(String[] args) 
 	{
-		int connected = 1;
+		
 		int port = PollServer.ADMIN_PORT;
-		String decision = "";
+		
 		
 		if (args.length > 0) {
 		    try {
@@ -235,6 +293,22 @@ public class AdminClient {
 		AdminClient myPoll = new AdminClient(port);
 		
 		myPoll.testConnect();
+		
+		while(myPoll.streamSocket.isConnected()){
+			
+			System.out.print("\nSend Request: ");
+			InputStreamReader converter = new InputStreamReader(System.in);
+			BufferedReader in = new BufferedReader(converter);
+			
+			
+			try {
+				String str = in.readLine();
+//				System.out.print(str);
+				myPoll.processUserInput(str);
+			} catch (IOException e) {
+				
+			}
+		}
 //		myPoll.test1();
 //		myPoll.test2(port);
 		

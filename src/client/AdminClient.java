@@ -69,6 +69,7 @@ public class AdminClient {
 		try {
 			String fromServer = in.readLine();
 			System.out.println("Server: " + fromServer);
+			//TODO figure out how to use this id variable and ensure its uniqueness
 //			id = Integer.decode(fromServer);
 			
 		} catch (NumberFormatException e) {
@@ -157,7 +158,9 @@ public class AdminClient {
 		String [] array = str.split("::");
 		int method;
 		String []args;
-		if(array.length < 2) return false;
+		if(array.length < 2){
+			return false;
+		}
 		try{
 			method = Integer.parseInt(array[0]);
 			args = array[1].split(","); //get the arguments for the function
@@ -171,7 +174,7 @@ public class AdminClient {
 			
 			//connect(String numOfOptions, String emailAddress)
 			if(args.length < 2){
-				System.out.println("invalid connect arguments...USAGE:'0::5,osamie2002@gmail.com'");
+//				System.out.println("invalid connect arguments...USAGE:'0::5,osamie2002@gmail.com'");
 				return false;
 			}
 			connect(args[0], args[1]);
@@ -189,14 +192,17 @@ public class AdminClient {
 		}
 		case 3:{
 			//stopPoll(String pollID)
+			stopPoll(args[0]);
 			return true;
 		}
 		case 4:{
 			//clearPoll(String pollID)
+			clearPoll(args[0]);
 			return true;
 		}
 		case 5:{
 			//resumePoll(String pollID)
+			resumePoll(args[0]);
 			return true;
 		}
 
@@ -302,8 +308,9 @@ public class AdminClient {
 			
 			try {
 				String str = in.readLine();
-//				System.out.print(str);
-				myPoll.processUserInput(str);
+				if (!myPoll.processUserInput(str)) {
+					System.out.println("invalid connect arguments...USAGE:'<0-5>::<pollID>'");
+				}
 			} catch (IOException e) {
 				
 			}

@@ -158,7 +158,12 @@ public class AdminClient {
 		String [] array = str.split("::");
 		int method;
 		String []args;
+		
 		if(array.length < 2){
+			if(str.equals("help")){
+				displayHelp();
+				return true;
+			}
 			return false;
 		}
 		try{
@@ -203,11 +208,22 @@ public class AdminClient {
 			resumePoll(args[0]);
 			return true;
 		}
-
 		default:
 			return false;
 		}
 		
+	}
+	/**
+	 * Displays help information on the client's interface
+	 */
+	public void displayHelp(){
+		System.out.println("METHOD CALLS:");
+		System.out.println("CreatePoll:\t '0::<numOfOptions>,<emailAdress>'");
+		System.out.println("startPoll:\t '1::<pollID>'");
+		System.out.println("pausePoll:\t '2::<pollID>'");
+		System.out.println("stopPoll:\t '3::<pollID>'");
+		System.out.println("clearPoll:\t '4::<pollID>'");
+		System.out.println("resumePoll:\t '5::<pollID>'");
 	}
 	
 	/**
@@ -235,7 +251,7 @@ public class AdminClient {
 			try {
 				String str = in.readLine();
 				if (!myPoll.processUserInput(str)) {
-					System.out.println("invalid connect arguments...USAGE:'<0-5>::<pollID>'");
+					System.out.println("invalid arguments...USAGE:'<0-5>::<pollID>'\n Enter 'help' for manual");
 				}
 			} catch (IOException e) {
 				

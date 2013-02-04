@@ -3,12 +3,12 @@ package client;
 import java.io.*;
 import java.net.*;
 
-public class client {
+public class Client {
 	DatagramPacket sendPacket, receivePacket;
 	   DatagramSocket sendReceiveSocket;
 	
 	   
-	 client(int port)
+	 Client(int port)
 	 {
 		 try {
 	         // Bind a datagram socket to any available port on the local host machine. 
@@ -50,7 +50,7 @@ public class client {
 		        System.exit(1);
 		    }
 		}
-		client clients = new client(portNum);
+		Client clients = new Client(portNum);
 		
 		
 		//Test options

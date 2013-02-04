@@ -32,8 +32,10 @@ class AdminListener {
 			try {
 				System.out.println("listening");
 				clientSocket = serverSocket.accept(); //accept connection from ADMIN client
+				
+				
 				System.out.println("connected");
-				new AdminWorker(clientSocket); //assign a worker thread to server new client
+				new AdminWorker(clientSocket).start(); //assign a worker thread to server new client
 			} catch (SocketException e2) { System.out.println("Done"); System.exit(0); }
 			catch (IOException e) { e.printStackTrace(System.err); System.exit(1);  }
 		}
@@ -57,23 +59,30 @@ class AdminWorker extends Thread{
 		 * - reassignment of clientSocket variable in Listener.listen()
 		 */
 		clientSocket = socket;
-	}
-	
-	@Override
-	public void run() {
 		try {
 			outToClient = new PrintWriter(clientSocket.getOutputStream(), true);
 			in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-			outToClient.println("Connected"); //notify admin client that it is now connected
-			
-			in.close();
-			outToClient.close();
 		} catch (SocketException e2) { System.out.println("Done"); System.exit(0); }
 		catch (IOException e) { e.printStackTrace(System.err); System.exit(1);  }
 	}
 	
 	@Override
+	public void run() {
+		//send the admin client a connection confirmation with its AdminId   
+		outToClient.println("You are now connected as: " + clientSocket.getLocalAddress().toString()); 
+		
+		while(clientSocket.isConnected()){
+			
+			
+		}
+		
+	}
+	
+	@Override
 	protected void finalize() throws Throwable {
+		System.out.println("AdminWorker dead");
+		in.close();
+		outToClient.close();
 		clientSocket.close();
 	}
 	

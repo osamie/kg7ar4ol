@@ -7,17 +7,25 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import server.PollServer;
 
-public class adminClient {
+
+public class AdminClient {
 
 	private Socket streamSocket;
 	private BufferedReader in;
-	private PrintWriter out;
+	private PrintWriter outToServer;
 	BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 	private int polls[] = new int[10];
 	private int numOfPolls;
-	public adminClient(int portNum)
-	{
+	
+
+	/**
+	 * Connects the client to the server and initializes the read and write steams/buffers
+	 * @param portNum
+	 */
+	public AdminClient(int portNum)
+	{		
 		numOfPolls = 0;
 		try {
 			// Bind a socket to any available port on the local host machine. 
@@ -30,7 +38,7 @@ public class adminClient {
 			System.exit(1);
 		}
 		try {
-			out = new PrintWriter(streamSocket.getOutputStream(), true);
+			outToServer = new PrintWriter(streamSocket.getOutputStream(), true);
 			in = new BufferedReader( new InputStreamReader( streamSocket.getInputStream()));
 		} catch (IOException e2) {
 			System.err.println("Couldn't get I/O connection");
@@ -39,66 +47,111 @@ public class adminClient {
 	
 	
 	}
+	
+	/**
+	 * Sends a 'create new poll' request to the server 
+	 * @param numOfOptions
+	 * @param emailAddress
+	 * @return 
+	 */
 	public int connect(String numOfOptions, String emailAddress)
 	{
+		/*
+		 * TODO the name of this method should be createPoll.
+		 * Connection is already being done in the constructor 
+		 */
 		String msgToSend = "->";
-		int gameID = 0;
-		
+		int id = 0;
 			
-			msgToSend = msgToSend + " " + numOfOptions + " " + emailAddress;
-			out.println(msgToSend);
+		msgToSend = msgToSend + " " + numOfOptions + " " + emailAddress;
+		outToServer.println(msgToSend);
 
-			try {
-				gameID = Integer.decode(in.readLine());
-			} catch (NumberFormatException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		try {
+			String fromServer = in.readLine();
+			System.out.println("Server: " + fromServer);
+			id = Integer.decode(fromServer);
 			
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		return gameID;
+		return id;
 	}
+	
+	/**
+	 * Sends a 'startPoll' request to server (i.e now allow votes for this poll)
+	 * @param pollID
+	 */
 	public void startPoll(String pollID) 
 	{
 		String msgToSend = "(+)";
 		
 		msgToSend = msgToSend + pollID;
-		out.println(msgToSend);
+		outToServer.println(msgToSend);
 		
 	}
+	
+	/**
+	 * Sends a 'pausePoll' request to server. Temporarily deactivate poll 
+	 * (i.e temporarily disallow votes for this poll)
+	 * 
+	 * @param pollID
+	 */
 	public void pausePoll(String pollID)
 	{
 		String msgToSend = "(!)";
 		
 		
 		msgToSend = msgToSend + pollID;
-		out.println(msgToSend);
+		outToServer.println(msgToSend);
 	}
+	
+	/**
+	 * Sends a 'stopPoll' request to server (i.e permanently deactivate the poll.
+	 * Results should be collected).
+	 * 
+	 * @param pollID
+	 */
 	public void stopPoll(String pollID)
 	{
 		String msgToSend = "(X)";
 		
 		msgToSend = msgToSend + pollID;
-		out.println(msgToSend);
+		outToServer.println(msgToSend);
 	}
+	
+	/**
+	 * Sends a 'clearPoll' request to the server (i.e discard all votes for this poll...poll remains active)
+	 * @param pollID
+	 */
 	public void clearPoll(String pollID)
 	{
 		String msgToSend = "(-)";
 			
 		msgToSend = msgToSend + pollID;
-		out.println(msgToSend);
+		outToServer.println(msgToSend);
 	}
+	
+	/**
+	 * Sends a 'resumePoll' request to server (i.e poll should be reactivated if not active)
+	 * @param pollID
+	 */
 	public void resumePoll(String pollID)
 	{
 		String msgToSend = "(0)";
 			
 		msgToSend = msgToSend + pollID;
-		out.println(msgToSend);
+		outToServer.println(msgToSend);
 	}
 	
+	
+	public void testConnect(){
+		connect("5","mock@mockdomain.ca");
+	}
 	
 	public void test1()
 	{
@@ -126,10 +179,10 @@ public class adminClient {
 	public void test2(int port)
 	{
 		System.out.println("Creating five polls with 5 different admins");
-		adminClient myPoll2 = new adminClient(port);
-		adminClient myPoll3 = new adminClient(port);
-		adminClient myPoll4 = new adminClient(port);
-		adminClient myPoll5 = new adminClient(port);
+		AdminClient myPoll2 = new AdminClient(port);
+		AdminClient myPoll3 = new AdminClient(port);
+		AdminClient myPoll4 = new AdminClient(port);
+		AdminClient myPoll5 = new AdminClient(port);
 		
 		polls[numOfPolls] = connect("1", "email1@e.ca");
 		myPoll2.polls[myPoll2.numOfPolls] = myPoll2.connect("2", "email2@e.ca");
@@ -166,7 +219,7 @@ public class adminClient {
 	public static void main(String[] args) 
 	{
 		int connected = 1;
-		int port = 5000;
+		int port = PollServer.ADMIN_PORT;
 		String decision = "";
 		
 		if (args.length > 0) {
@@ -179,10 +232,11 @@ public class adminClient {
 		}
 		
 		
-		adminClient myPoll = new adminClient(port);
+		AdminClient myPoll = new AdminClient(port);
 		
-		myPoll.test1();
-		myPoll.test2(port);
+		myPoll.testConnect();
+//		myPoll.test1();
+//		myPoll.test2(port);
 		
 		
 		

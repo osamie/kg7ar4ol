@@ -53,6 +53,6 @@ class ListenerThread extends Thread{
 class VoteListenerThread extends Thread{
 	@Override
 	public void run() {
-		new VoteListener(PollServer.VOTING_PORT);
+		new VoteListener(PollServer.VOTING_PORT).listen();
 	}
 }

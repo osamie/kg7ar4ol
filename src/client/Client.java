@@ -3,6 +3,8 @@ package client;
 import java.io.*;
 import java.net.*;
 
+import server.PollServer;
+
 public class Client {
 	DatagramPacket sendPacket, receivePacket;
 	   DatagramSocket sendReceiveSocket;
@@ -28,7 +30,7 @@ public class Client {
 	    	 sendPacket = new DatagramPacket(msg, msg.length,InetAddress.getLocalHost(), port);
 	         
 	         sendReceiveSocket.send(sendPacket);
-	         System.out.println("Client: Vote sent.");         
+	         System.out.println("Client: Vote sent. to port" + port);         
 	      }
 	      catch (UnknownHostException e1)  { e1.printStackTrace(); System.exit(1); }
 	      catch (IOException e2) { e2.printStackTrace(); System.exit(1);  }
@@ -41,7 +43,7 @@ public class Client {
 		// TODO Auto-generated method stub
 		String vote = "";
 		
-		int portNum = 5000;	
+		int portNum = PollServer.VOTING_PORT;	
 		if (args.length > 0) {
 		    try {
 		        portNum = Integer.parseInt(args[0]);
@@ -50,12 +52,12 @@ public class Client {
 		        System.exit(1);
 		    }
 		}
-		Client clients = new Client(portNum);
+		Client client = new Client(portNum);
 		
 		
 		//Test options
-		vote = "!-> 1234 2";
-		clients.vote(vote,portNum);
+		vote = "!->1234,2";
+		client.vote(vote,portNum);
 	}
 
 }

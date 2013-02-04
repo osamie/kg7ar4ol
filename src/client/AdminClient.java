@@ -171,10 +171,8 @@ public class AdminClient {
 		
 		switch (method) {
 		case 0:{ 
-			
 			//connect(String numOfOptions, String emailAddress)
 			if(args.length < 2){
-//				System.out.println("invalid connect arguments...USAGE:'0::5,osamie2002@gmail.com'");
 				return false;
 			}
 			connect(args[0], args[1]);
@@ -212,7 +210,7 @@ public class AdminClient {
 		
 	}
 	
-	public void testConnect(){
+	public void testCreatePoll(){
 		connect("5","mock@mockdomain.ca");
 	}
 	
@@ -281,10 +279,7 @@ public class AdminClient {
 	 */
 	public static void main(String[] args) 
 	{
-		
-		int port = PollServer.ADMIN_PORT;
-		
-		
+		int port = PollServer.ADMIN_PORT;		
 		if (args.length > 0) {
 		    try {
 		        port = Integer.parseInt(args[0]);
@@ -293,18 +288,13 @@ public class AdminClient {
 		        System.exit(1);
 		    }
 		}
-		
-		
-		AdminClient myPoll = new AdminClient(port);
-		
-		myPoll.testConnect();
-		
+		AdminClient myPoll = new AdminClient(port);		
+//		myPoll.testCreatePoll();
 		while(myPoll.streamSocket.isConnected()){
 			
 			System.out.print("\nSend Request: ");
 			InputStreamReader converter = new InputStreamReader(System.in);
 			BufferedReader in = new BufferedReader(converter);
-			
 			
 			try {
 				String str = in.readLine();
@@ -315,68 +305,5 @@ public class AdminClient {
 				
 			}
 		}
-//		myPoll.test1();
-//		myPoll.test2(port);
-		
-		
-		
-		/*while(connected == 1)
-		{
-			try {
-				decision = myPoll.bufferRead.readLine();	
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			if(decision.equals("Connect") == true)
-			{
-				String emailAddress = "";
-				String numOptions;
-				System.out.print("Enter how many options: ");
-				try {
-					numOptions = bufferRead.readLine();	
-					System.out.print("Enter your email address: ");
-					emailAddress = bufferRead.readLine();
-					
-				} catch (NumberFormatException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				}
-					
-				myPoll.polls[myPoll.numOfPolls] = myPoll.connect(numOptions, emailAddress);
-				myPoll.numOfPolls++;
-			}
-			else if(decision.equals("Start")== true)
-			{
-				System.out.print("What PollID would you like to start: ");
-				myPoll.startPoll(bufferRead.readLine());
-			}
-			else if(decision.equals("Pause") == true)
-			{
-				System.out.print("What PollID would you like to pause: ");
-				myPoll.pausePoll(bufferRead.readLine());
-			}
-			else if(decision.equals("stop")== true)
-			{
-				System.out.print("What PollID would you like to stop: ");
-				myPoll.stopPoll(bufferRead.readLine());
-			}
-			else if(decision.equals("resume")== true)
-			{
-				System.out.print("What PollID would you like to resume: ");
-				myPoll.resumePoll(bufferRead.readLine());
-			}
-			else if(decision.equals("clear")== true)
-			{
-				System.out.print("What PollID would you like to clear: ");
-				myPoll.clearPoll(bufferRead.readLine());
-			}
-			
-		}
-*/
 	}
 }

@@ -54,10 +54,34 @@ public class Client {
 		}
 		Client client = new Client(portNum);
 		
-		
+		while(client.sendReceiveSocket.isBound()){
+			
+			System.out.print("\nSend vote: ");
+			InputStreamReader converter = new InputStreamReader(System.in);
+			BufferedReader in = new BufferedReader(converter);
+			
+			try {
+				String str = in.readLine();
+				if (!client.processUserInput(str)) {
+//					System.out.println("invalid arguments...USAGE:'<0-5>::<pollID>'\n Enter 'help' for manual");
+					System.out.println("unprocessed request sent \nUSAGE: '!->1234,2'");
+				}
+			} catch (IOException e) {
+				
+			}
+		}
 		//Test options
-		vote = "!->1234,2";
-		client.vote(vote,portNum);
+		
+	}
+	/**
+	 * TODO Incomplete processing...
+	 * @param str
+	 * @return
+	 */
+	private boolean processUserInput(String str) {
+//		vote = "!->1234,2";
+		vote(str,PollServer.VOTING_PORT);
+		return false;
 	}
 
 }

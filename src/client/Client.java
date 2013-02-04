@@ -7,42 +7,49 @@ import server.PollServer;
 
 public class Client {
 	DatagramPacket sendPacket, receivePacket;
-	   DatagramSocket sendReceiveSocket;
+	DatagramSocket sendReceiveSocket;
 	
 	   
-	 Client(int port)
-	 {
-		 try {
-	         // Bind a datagram socket to any available port on the local host machine. 
+	Client(int port){
+		try {
+	         // Bind a Datagram socket to any available port on the local host machine. 
 	    	 sendReceiveSocket = new DatagramSocket();
-	      } catch (SocketException se) {   // Can't create the socket.
+	     } catch (SocketException se) {   // Can't create the socket.
 	         se.printStackTrace();
 	         System.exit(1);
-	      }
+	     }
 	 }
 	 public void vote(String s,int port)
 	 {
-		// Send a DatagramPacket to port 5000 on the same host.
-	      try {
+		 try {
 	          // Java stores characters as 16-bit Unicode values, but 
 	          // DatagramPackets store their messages as byte arrays.
-	          byte msg[] = s.getBytes();
+	         byte msg[] = s.getBytes();
 	    	 sendPacket = new DatagramPacket(msg, msg.length,InetAddress.getLocalHost(), port);
-	         
 	         sendReceiveSocket.send(sendPacket);
 	         System.out.println("Client: Vote sent. to port" + port);         
-	      }
-	      catch (UnknownHostException e1)  { e1.printStackTrace(); System.exit(1); }
-	      catch (IOException e2) { e2.printStackTrace(); System.exit(1);  }
- 
+	     }
+	     catch (UnknownHostException e1)  { e1.printStackTrace(); System.exit(1); }
+	     catch (IOException e2) { e2.printStackTrace(); System.exit(1);  }
 	 }
-	   /**
+	 
+
+	/**
+	 * TODO Validation of user's input: Before voting, ensures that the userInput adheres to right format for voting
+	 * 		FORMAT: "!-><pollID:int>,<optionNumber:int>"
+	 * @param str
+	 * @return
+	 */
+	private boolean processUserInput(String str) {
+		vote(str,PollServer.VOTING_PORT);
+		return false;
+	}
+	 
+	 
+	 /**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		String vote = "";
-		
 		int portNum = PollServer.VOTING_PORT;	
 		if (args.length > 0) {
 		    try {
@@ -55,7 +62,6 @@ public class Client {
 		Client client = new Client(portNum);
 		
 		while(client.sendReceiveSocket.isBound()){
-			
 			System.out.print("\nSend vote: ");
 			InputStreamReader converter = new InputStreamReader(System.in);
 			BufferedReader in = new BufferedReader(converter);
@@ -63,25 +69,15 @@ public class Client {
 			try {
 				String str = in.readLine();
 				if (!client.processUserInput(str)) {
-//					System.out.println("invalid arguments...USAGE:'<0-5>::<pollID>'\n Enter 'help' for manual");
-					System.out.println("unprocessed request sent \nUSAGE: '!->1234,2'");
+					System.out.println("Unvalidated vote request sent \nUSAGE: '!->1234,2'");
+					continue;
 				}
+				System.out.println("vote sent");
 			} catch (IOException e) {
-				
+				System.err.println("I/O exception. Cause: " + e.getCause());
+				continue;
 			}
 		}
-		//Test options
-		
-	}
-	/**
-	 * TODO Incomplete processing...
-	 * @param str
-	 * @return
-	 */
-	private boolean processUserInput(String str) {
-//		vote = "!->1234,2";
-		vote(str,PollServer.VOTING_PORT);
-		return false;
 	}
 
 }

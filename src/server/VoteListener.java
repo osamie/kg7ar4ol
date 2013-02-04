@@ -28,7 +28,7 @@ class VoteListener {
 	 */
 	public void listen(){
 		byte[]data;
-		System.out.println("Listening for vote on port" + receiveSocket.getPort());
+		System.out.println("Listening for Voters...");
 		while (receiveSocket.isBound()){
 			data = new byte[100];
 			receivePacket = new DatagramPacket(data, data.length);

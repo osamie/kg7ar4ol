@@ -33,7 +33,7 @@ class AdminListener {
 	public void listen(){
 		while(true){
 			try {
-				System.out.println("listening...");
+				System.out.println("Listening for Admins...");
 				clientSocket = serverSocket.accept(); //accept connection from ADMIN client
 				
 				
@@ -50,7 +50,7 @@ class AdminListener {
 }
 
 /**
- *  Each AdminWorker is responsible for handling/serving each connected 
+ *  Each spawned AdminWorker is responsible for handling/serving each connected 
  *  ADMIN's requests/messages
  */
 class AdminWorker extends Thread{
@@ -78,12 +78,17 @@ class AdminWorker extends Thread{
 		
 		/*
 		 * TODO
-		 * Provide the connected AdminClient with an adminID
+		  Provide the connected AdminClient with an adminID
+		  
+		  PROCESS:
+		 * Right after admins are now connected;
+		 * Client: if (adminID == 0) send "adminID:0"  to Server and wait for your new adminID 
+		 * Server: waits for the first client message:
+		 	If message == "adminID:0" {generate and send new adminID;  //"adminID:<uniqueID>"}
+
 		 */
-		
 //		outToClient.println("**You are now connected as: " + clientSocket.getLocalSocketAddress().toString() + "**"); 
-		
-		System.out.println("**You are now connected as: " + clientSocket.getPort() + "**");
+		System.out.println("**New admin connnected at port: " + clientSocket.getPort() + "**");
 		while(clientSocket.isConnected()){
 			//listen for any request from AdminClient
 			try {

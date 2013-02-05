@@ -7,9 +7,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import client.AdminClient;
+import server.PollServer;
 
-public class sampleTest {
+import client.AdminClient;
+import client.Client;
+
+public class PollingTest {
 	private int polls[] = new int[10];
 	int numOfPolls;
 	@Before
@@ -21,14 +24,32 @@ public class sampleTest {
 	}
 
 	@Test
-	public final void testMain() {
-		fail("Not yet implemented"); // TODO
+	public final void testAdminConnections() {
+		int testCount = 1;
+		assertTrue(connectionTest(testCount));
 	}
 	
+	/**
+	 *Test admin connections to server    
+	 * @param numberOfAdmins
+	 * @return false if any of the connections fail
+	 */
+	public boolean connectionTest(int numberOfAdmins){
+		Boolean testResult = true;
+		PollServer server = new PollServer();
+		AdminClient []admins = new AdminClient[numberOfAdmins];
+		server.startListeners(); //start listening for connections
 
-	public void testCreatePoll(){
-//		connect("5","mock@mockdomain.ca");
+		//Create Admins and test their connections  
+		for(int i = 0; i<admins.length;i++){
+			if (!(new AdminClient(PollServer.ADMIN_PORT).isConnected())){
+				testResult = false;
+				break;
+			}
+		}
+		return testResult;
 	}
+	
 	
 	public void test1()
 	{

@@ -13,7 +13,7 @@ import server.PollServer;
 
 public class AdminClient {
 
-	private Socket streamSocket;
+	private Socket adminSocket;
 	private BufferedReader in;
 	private PrintWriter outToServer;
 	BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
@@ -31,7 +31,7 @@ public class AdminClient {
 		numOfPolls = 0;
 		try {
 			// Bind a socket to any available port on the local host machine. 
-			streamSocket = new Socket("127.0.0.1", portNum);
+			adminSocket = new Socket("127.0.0.1", portNum);
 			
 		} catch (UnknownHostException e1) {
 			System.err.println("Don't know about host");
@@ -41,8 +41,8 @@ public class AdminClient {
 			System.exit(1);
 		}
 		try {
-			outToServer = new PrintWriter(streamSocket.getOutputStream(), true);
-			in = new BufferedReader( new InputStreamReader( streamSocket.getInputStream()));
+			outToServer = new PrintWriter(adminSocket.getOutputStream(), true);
+			in = new BufferedReader( new InputStreamReader( adminSocket.getInputStream()));
 		} catch (IOException e2) {
 			System.err.println("Couldn't get I/O connection");
 			System.exit(1);
@@ -51,24 +51,6 @@ public class AdminClient {
 	
 	}
 	
-	public void myIPAddresses(){
-		InetAddress[] localaddr;
-
-        try {
-            localaddr = InetAddress.getAllByName("host.name");
-
-            for(int i = 0;i<localaddr.length;i++){
-
-                System.out.println("\n" + localaddr[i].getHostAddress());
-
-            }
-
-
-        } catch (UnknownHostException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-	}
 	
 	/**
 	 * Sends a 'create new poll' request to the server 
@@ -76,7 +58,7 @@ public class AdminClient {
 	 * @param emailAddress
 	 * @return 
 	 */
-	public int connect(String numOfOptions, String emailAddress)
+	public int createPoll(String numOfOptions, String emailAddress)
 	{
 		/*
 		 * TODO the name of this method should be createPoll.
@@ -172,7 +154,8 @@ public class AdminClient {
 	}
 	
 	/**
-	 * string format is methodName::arg1,agr2....
+	 * Validates user input and sends to server
+	 * Input format is "methodName::arg1,agr2...."
 	 * @param str
 	 * @return isValidInput
 	 */
@@ -202,7 +185,7 @@ public class AdminClient {
 			if(args.length < 2){
 				return false;
 			}
-			connect(args[0], args[1]);
+			createPoll(args[0], args[1]);
 			return true;
 		}
 		case 1:{
@@ -248,6 +231,10 @@ public class AdminClient {
 		System.out.println("resumePoll:\t '5::<pollID>'");
 	}
 	
+	public boolean isConnected(){
+		return this.adminSocket.isConnected();
+	}
+	
 	/**
 	 * @param args
 	 */
@@ -263,8 +250,7 @@ public class AdminClient {
 		    }
 		}
 		AdminClient myPoll = new AdminClient(port);
-//		myPoll.myIPAddresses();
-		while(myPoll.streamSocket.isConnected()){
+		while(myPoll.adminSocket.isConnected()){
 			
 			System.out.print("\nSend Request: ");
 			InputStreamReader converter = new InputStreamReader(System.in);

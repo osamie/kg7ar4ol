@@ -30,7 +30,6 @@ public class PollServer {
 		try {
 			admin.join();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

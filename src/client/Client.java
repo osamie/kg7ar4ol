@@ -10,7 +10,7 @@ public class Client {
 	DatagramSocket sendReceiveSocket;
 	
 	   
-	Client(int port){
+	public Client(int port){
 		try {
 	         // Bind a Datagram socket to any available port on the local host machine. 
 	    	 sendReceiveSocket = new DatagramSocket();
@@ -19,6 +19,7 @@ public class Client {
 	         System.exit(1);
 	     }
 	 }
+	
 	 public void vote(String s,int port)
 	 {
 		 try {
@@ -40,7 +41,7 @@ public class Client {
 	 * @param str
 	 * @return
 	 */
-	private boolean processUserInput(String str) {
+	private boolean validateUserInput(String str) {
 		vote(str,PollServer.VOTING_PORT);
 		return false;
 	}
@@ -68,7 +69,7 @@ public class Client {
 			
 			try {
 				String str = in.readLine();
-				if (!client.processUserInput(str)) {
+				if (!client.validateUserInput(str)) {
 					System.out.println("Unvalidated vote request sent \nUSAGE: '!->1234,2'");
 					continue;
 				}

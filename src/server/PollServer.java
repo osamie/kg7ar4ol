@@ -14,8 +14,8 @@ import javax.sql.rowset.Joinable;
  * Listener is a TCP server where each worker accepts the admin messages
  */
 public class PollServer {
-	public static final int ADMIN_PORT = 5000;
-	public static final int VOTING_PORT = 1122;
+	public static final int ADMIN_PORT = 9000;
+	public static final int VOTING_PORT = 4999;
 
 	public PollServer() {
 	
@@ -36,6 +36,7 @@ public class PollServer {
 	}
 	
 	public static void main(String[] args) {
+		
 		new PollServer().startListeners();
 	}
 }

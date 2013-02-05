@@ -37,7 +37,7 @@ class AdminListener {
 				clientSocket = serverSocket.accept(); //accept connection from ADMIN client
 				
 				
-				System.out.println("connected");
+				System.out.println("New Admin connected");
 				new AdminWorker(clientSocket).start(); //assign a worker thread to server new client
 			} catch (SocketException e2) { System.out.println("Done"); System.exit(0); }
 			catch (IOException e) { e.printStackTrace(System.err); System.exit(1);  }

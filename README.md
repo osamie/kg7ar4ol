@@ -6,7 +6,7 @@ On Unix: Open terminal and navigate to the root directory of the project
 
 Open a terminal or command prompt window for each instance of a client or server 
 
-How to launch a VoterClient
+Launching a VoterClient
 ---------------------------
   1)Navigate to root directory of the project
   2)cd bin
@@ -14,7 +14,7 @@ How to launch a VoterClient
   
   
 
-How to launch a Admin Client
+Launching an Admin Client
 ---------------------------
 1) Navigate to root directory of the project
 2) cd bin
@@ -22,7 +22,7 @@ How to launch a Admin Client
 
 
 
-How to launch the PollingServer
+Launching the PollingServer
 ---------------------------
 1) Navigate to root directory of the project
 2) cd bin 

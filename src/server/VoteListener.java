@@ -69,7 +69,7 @@ class VotesHandler extends Thread{
 	 */
 	private void processRequest(String req){
 		String request = req;
-		request = req.replaceFirst("!->", ""); //remove the vote request identifier
+		request = req.replaceFirst("!->", ""); //remove the vote request identifier if any
 		String [] args = request.split(",");
 		if (args.length<2){
 			System.out.println("Invalid vote request received:" + request);

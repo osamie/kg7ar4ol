@@ -27,8 +27,7 @@ public class Client {
 	          // DatagramPackets store their messages as byte arrays.
 	         byte msg[] = s.getBytes();
 	    	 sendPacket = new DatagramPacket(msg, msg.length,InetAddress.getLocalHost(), port);
-	         sendReceiveSocket.send(sendPacket);
-	         System.out.println("Client: Vote sent. to port" + port);         
+	         sendReceiveSocket.send(sendPacket);         
 	     }
 	     catch (UnknownHostException e1)  { e1.printStackTrace(); System.exit(1); }
 	     catch (IOException e2) { e2.printStackTrace(); System.exit(1);  }
@@ -43,7 +42,7 @@ public class Client {
 	 */
 	private boolean validateUserInput(String str) {
 		vote(str,PollServer.VOTING_PORT);
-		return false;
+		return true;
 	}
 	 
 	 
@@ -63,7 +62,7 @@ public class Client {
 		Client client = new Client(portNum);
 		
 		while(client.sendReceiveSocket.isBound()){
-			System.out.print("\nSend vote: ");
+			System.out.print("\nSend vote(Format:<pollID>,<optionNumber> ): ");
 			InputStreamReader converter = new InputStreamReader(System.in);
 			BufferedReader in = new BufferedReader(converter);
 			

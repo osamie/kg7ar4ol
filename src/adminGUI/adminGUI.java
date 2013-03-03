@@ -1,4 +1,8 @@
-//vhgjdfgdj
+/*
+ * GUI for the admin client.
+ * Creates an instance of AdminClient and the GUI is attached to
+ * that instance.
+ */
 
 package adminGUI;
 

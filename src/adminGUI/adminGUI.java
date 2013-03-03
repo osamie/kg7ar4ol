@@ -1,9 +1,3 @@
-/*
- * GUI for the admin client.
- * Creates an instance of AdminClient and the GUI is attached to
- * that instance.
- */
-
 package adminGUI;
 
 import org.eclipse.jface.action.MenuManager;
@@ -89,8 +83,7 @@ public class adminGUI extends ApplicationWindow {
 		text_question = new Text(container, SWT.BORDER);
 		text_question.setBounds(282, 45, 181, 21);
 		
-		text_2 = new Text(container, SWT.BORDER);
-		text_2.setBounds(283, 105, 180, 21);
+		
 		
 		Label lblQuestion = new Label(container, SWT.NONE);
 		lblQuestion.setBounds(469, 51, 55, 15);
@@ -127,21 +120,59 @@ public class adminGUI extends ApplicationWindow {
 			public void widgetSelected(SelectionEvent e) {
 				String numOfOptions = combo_answers.getText();
 				String email = txtSampledomaincom.getText();
+				String answerString = "";;
 				Boolean valid = true;
 				long pollID;
-				if(numOfOptions== "" || numOfOptions.compareTo(String.valueOf(maxOptions)) > 0)
+
+				try
 				{
-					label_answers.setText("Select the amount of answers.");
+					Integer.parseInt(numOfOptions);
+				}
+				catch(NumberFormatException e1)
+				{
+					label_answers.setText("Select a number value.");
 					valid = false;
 				}
-				if(email == "" || email.contains("@") == false)
+				if(valid!= false)
+				{
+					if(numOfOptions== "" || Integer.parseInt(numOfOptions) > maxOptions || Integer.parseInt(numOfOptions)<1)
+					{
+						label_answers.setText("Select the amount of answers.");
+						valid = false;
+					}
+				}
+				if(text_question.getText().equals("") == true)
+				{
+					valid = false;
+					text_question.setText("Enter a question.");
+				}
+				if(email == "" || email.contains("@") == false || email.contains(".") == false)
 				{
 					txtSampledomaincom.setText("Invalid Email Address");
 					valid = false;
 				}
 				if(valid == true)
 				{
-					pollID = admin.createPoll(numOfOptions, email);
+					try{
+						answersGUI answers = new answersGUI(numOfOptions);
+						answers.setBlockOnOpen(true);
+						answers.open();
+						while(answers.done == 0)
+						{			}
+						answerString = answers.answersValue;
+						System.out.println(answerString);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				}
+				if(valid == true)
+				{	
+					String message = "";
+					message = email + "|" + text_question.getText() +"|"+ numOfOptions + "|" + answerString;
+						
+					pollID = admin.createPoll(message);//blocking 
+					
+					
 					label_answers.setText("");
 					list_Polls.add(String.valueOf(pollID) + " - " + numOfOptions);
 					list_Active.add(String.valueOf(pollID)+ " - " + numOfOptions);
@@ -188,9 +219,7 @@ public class adminGUI extends ApplicationWindow {
 					else
 					{
 						list_Active.setSelection(focusedIndex);
-					}
-					
-					
+					}			
 				}
 			}
 		});
@@ -199,6 +228,9 @@ public class adminGUI extends ApplicationWindow {
 		
 		Button btnResumePoll = new Button(container, SWT.NONE);
 		btnResumePoll.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * Resume Poll Button
+			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(list_Paused.getSelectionIndex()!=-1 && list_Paused.getItemCount()!=0)
@@ -420,3 +452,4 @@ public class adminGUI extends ApplicationWindow {
 		return new Point(640, 497);
 	}
 }
+//public voteObservee

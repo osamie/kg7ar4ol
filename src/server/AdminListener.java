@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Random;
+
 
 /**
  * AdminListener is a TCP server where each worker accepts the admin messages
@@ -35,8 +37,7 @@ class AdminListener {
 			try {
 				System.out.println("Listening for Admins...");
 				clientSocket = serverSocket.accept(); //accept connection from ADMIN client
-				
-				
+							
 				System.out.println("New Admin connected");
 				new AdminWorker(clientSocket).start(); //assign a worker thread to server new client
 			} catch (SocketException e2) { System.out.println("Done"); System.exit(0); }
@@ -114,6 +115,40 @@ class AdminWorker extends Thread{
 	private void processRequest(String request){
 		//TODO parse string
 		System.out.println("received request: " + request);
+		String option = request.substring(0,3);
+		if(request.contains("->") == true)
+		{
+			Random rdg = new Random();
+			long temp = 0;
+			//While(Check if ID exists)
+			//generate another id.
+			temp = rdg.nextLong();
+			outToClient.println("$ " + String.valueOf(temp));
+		}
+		else if(request.contains("->"))
+		{
+			
+		}
+		else if(request.contains("(+)"))
+		{
+			
+		}
+		else if(request.contains("(!)"))
+		{
+			
+		}
+		else if(request.contains("(X)"))
+		{
+			
+		}
+		else if(request.contains("(-)"))
+		{
+			
+		}
+		else if(request.contains("(0)"))
+		{
+			
+		}
 		
 		/*
 		 * TODO
@@ -137,6 +172,71 @@ class AdminWorker extends Thread{
 		in.close();
 		outToClient.close();
 		clientSocket.close();
+	}
+	/**
+	 * Sends a 'startPoll' request to server (i.e now allow votes for this poll)
+	 * @param pollID
+	 */
+	public void startPoll(String pollID) 
+	{
+		String msgToSend = "(+)";
+		
+		msgToSend = msgToSend + pollID;
+		
+		
+	}
+	
+	/**
+	 * Sends a 'pausePoll' request to server. Temporarily deactivate poll 
+	 * (i.e temporarily disallow votes for this poll)
+	 * 
+	 * @param pollID
+	 */
+	public void pausePoll(String pollID)
+	{
+		String msgToSend = "(!)";
+		
+		
+		msgToSend = msgToSend + pollID;
+		
+	}
+	
+	/**
+	 * Sends a 'stopPoll' request to server (i.e permanently deactivate the poll.
+	 * Results should be collected).
+	 * 
+	 * @param pollID
+	 */
+	public void stopPoll(String pollID)
+	{
+		String msgToSend = "(X)";
+		
+		msgToSend = msgToSend + pollID;
+	
+	}
+	
+	/**
+	 * Sends a 'clearPoll' request to the server (i.e discard all votes for this poll...poll remains active)
+	 * @param pollID
+	 */
+	public void clearPoll(String pollID)
+	{
+		String msgToSend = "(-)";
+			
+		msgToSend = msgToSend + pollID;
+	
+	}
+	
+	/**
+	 * Sends a 'resumePoll' request to server (i.e poll should be reactivated if not active)
+	 * @param pollID
+	 */
+	public void resumePoll(String pollID)
+	{
+		String msgToSend = "(0)";
+			
+		msgToSend = msgToSend + pollID;
+		
 	}
 	
 }

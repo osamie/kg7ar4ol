@@ -67,25 +67,32 @@ class VotesHandler extends Thread{
 	/**
 	 * Parse and then update the necessary poll  
 	 */
-	private void processRequest(String req){
-		String request = req;
-		request = req.replaceFirst("!->", ""); //remove the vote request identifier if any
-		String [] args = request.split(",");
-		if (args.length<2){
-			System.out.println("Invalid vote request received:" + request);
-			return;
-		}
+	private void processRequest(byte[] req){//String req){
+		Long id = Long.valueOf(req[0]);
+		Long choice = Long.valueOf(req[1]);
+		System.out.println(id + " " + choice);
+		
+		
+		//request = req.replaceFirst("!->", ""); //remove the vote request identifier if any
+		//String [] args = request.split(",");
+		//if (args.length<2){
+		//	System.out.println("Invalid vote request received:" + request);
+		//	return;
+		//}
 		/*
 		 * TODO update the corresponding poll. The corresponding poll
 		 *    checks for duplicate or repeated voter
 		 */
-		System.out.println("voted option:" + args[1] + " for pollID:" + args[0]);
+		//System.out.println("voted option:" + args[1] + " for pollID:" + args[0]);
 	}
 	
 	@Override
 	public void run() {
+		byte[] request;
 		//TODO update the poll specified in the packet
-		String request = new String (receivedPacket.getData());
+		//String request = new String (receivedPacket.getData());
+		
+		request = receivedPacket.getData();
 		processRequest(request); //TODO
 	}
 	

@@ -1,21 +1,12 @@
 package server;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
-
-import javax.sql.rowset.Joinable;
 
 /*
  * Listener is a TCP server where each worker accepts the admin messages
  */
 public class PollServer {
-	public static final int ADMIN_PORT = 9000;
-	public static final int VOTING_PORT = 4999;
+	public static final int ADMIN_PORT = 9005;
+	public static final int VOTING_PORT = 6050;
 
 	public PollServer() {
 	

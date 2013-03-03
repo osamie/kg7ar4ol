@@ -1,16 +1,25 @@
 package client;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 import server.PollServer;
+
 
 public class Client {
 	DatagramPacket sendPacket, receivePacket;
 	DatagramSocket sendReceiveSocket;
-	
+	private static int portNum;
 	   
 	public Client(int port){
+		
+		portNum = port;
 		try {
 	         // Bind a Datagram socket to any available port on the local host machine. 
 	    	 sendReceiveSocket = new DatagramSocket();
@@ -20,13 +29,15 @@ public class Client {
 	     }
 	 }
 	
-	 public void vote(String s,int port)
+	 public void vote(Long pollId, Long choice)
 	 {
 		 try {
 	          // Java stores characters as 16-bit Unicode values, but 
 	          // DatagramPackets store their messages as byte arrays.
-	         byte msg[] = s.getBytes();
-	    	 sendPacket = new DatagramPacket(msg, msg.length,InetAddress.getLocalHost(), port);
+	         byte msg[] = new byte[2]; 
+	         msg[0] = pollId.byteValue();
+	         msg[1] = choice.byteValue();
+	    	 sendPacket = new DatagramPacket(msg, msg.length,InetAddress.getLocalHost(), portNum);
 	         sendReceiveSocket.send(sendPacket);         
 	     }
 	     catch (UnknownHostException e1)  { e1.printStackTrace(); System.exit(1); }
@@ -41,7 +52,7 @@ public class Client {
 	 * @return
 	 */
 	private boolean validateUserInput(String str) {
-		vote(str,PollServer.VOTING_PORT);
+		//vote(str);
 		return true;
 	}
 	 
@@ -62,7 +73,7 @@ public class Client {
 		Client client = new Client(portNum);
 		
 		while(client.sendReceiveSocket.isBound()){
-			System.out.print("\nSend vote(Format:<pollID>,<optionNumber> ): ");
+			System.out.print("\nSend vote(Format:<pollID> <optionNumber> ): ");
 			InputStreamReader converter = new InputStreamReader(System.in);
 			BufferedReader in = new BufferedReader(converter);
 			
@@ -78,6 +89,7 @@ public class Client {
 				continue;
 			}
 		}
+		
 	}
 
 }

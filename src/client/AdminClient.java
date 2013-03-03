@@ -4,30 +4,35 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+
+import java.util.concurrent.Semaphore;
 
 import server.PollServer;
 
 
 public class AdminClient {
 
-	private Socket adminSocket;
+	Semaphore poll_sem;
+	static Long newPollId;
+	
+	Socket adminSocket;
 	private BufferedReader in;
 	private PrintWriter outToServer;
 	BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 	private int numOfPolls;
 	private int polls[] = new int[10];
 	private long adminID = 0;
-	
+	private MessageListener messageReciever;
 
 	/**
 	 * Connects the client to the server and initializes the read and write steams/buffers
 	 * @param portNum
 	 */
 	public AdminClient(int portNum)
-	{		
+	{	
+		
 		numOfPolls = 0;
 		try {
 			// Bind a socket to any available port on the local host machine. 
@@ -47,9 +52,13 @@ public class AdminClient {
 			System.err.println("Couldn't get I/O connection");
 			System.exit(1);
 		} 
-	
+		poll_sem = new Semaphore(1);//initialize semaphore value to 1
+		messageReciever = new MessageListener(this);
+		messageReciever.start();
+		
 	
 	}
+	
 	
 	
 	/**
@@ -58,33 +67,49 @@ public class AdminClient {
 	 * @param emailAddress
 	 * @return 
 	 */
-	public int createPoll(String numOfOptions, String emailAddress)
+	public long createPoll(String message)
 	{
 		/*
 		 * TODO the name of this method should be createPoll.
 		 * Connection is already being done in the constructor 
 		 */
-		String msgToSend = "->";
-		int id = 0;
-			
-		msgToSend = msgToSend + " " + numOfOptions + " " + emailAddress;
-		outToServer.println(msgToSend);
-
+		String msgToSend = "->" + message;
+	
+		outToServer.println(msgToSend); //sends the request
+		
+		//update GUI with "waiting for pollID" status 
+		String temp = "";
+		
+		//Blocking wait for messageListener to receive and update this.newPollID 
 		try {
-			String fromServer = in.readLine();
-			System.out.println("Server: " + fromServer);
-			//TODO figure out how to use this id variable and ensure its uniqueness
-//			id = Integer.decode(fromServer);
-			
+			poll_sem.acquire();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			poll_sem.release();
+		}
+
+		return newPollId; //get newPollID
+		
+		/*try {
+			temp = in.readLine();
+			temp = temp.substring(temp.indexOf("$") + 2);
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		
-		return id;
+	}
+	
+	/**
+	 * Server has 
+	 */
+	public void pollCreated() {
+		//
 	}
 	
 	/**
@@ -164,7 +189,7 @@ public class AdminClient {
 		int method;
 		String []args;
 		
-		if(array.length < 2){
+		if(array.length < 1){
 			if(str.equals("help")){
 				displayHelp();
 				return true;
@@ -182,10 +207,10 @@ public class AdminClient {
 		switch (method) {
 		case 0:{ 
 			//connect(String numOfOptions, String emailAddress)
-			if(args.length < 2){
+			if(args.length < 1){
 				return false;
 			}
-			createPoll(args[0], args[1]);
+			createPoll(args[0]);
 			return true;
 		}
 		case 1:{
@@ -234,7 +259,15 @@ public class AdminClient {
 	public boolean isConnected(){
 		return this.adminSocket.isConnected();
 	}
-	
+	public void disconnect()
+	{
+		try {
+			adminSocket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * @param args
 	 */
@@ -266,4 +299,78 @@ public class AdminClient {
 			}
 		}
 	}
+}
+
+/**
+ * Listens to all messages from the server
+ * @author geoffkinson
+ *
+ */
+class MessageListener extends Thread
+{
+	BufferedReader fromServer;
+	AdminClient adminClient;
+	Socket socket;
+	MessageListener(AdminClient client)
+	{
+		socket = client.adminSocket;
+		adminClient = client;
+		try {
+			//acquires semaphore on AdminClient startup 
+			adminClient.poll_sem.acquire();
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			fromServer = new BufferedReader( new InputStreamReader( socket.getInputStream()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void run()
+	{
+		String input;
+		while(true)
+		{
+		try {
+			input = fromServer.readLine();
+			System.out.println(input);
+			if(input.contains("$") == true)
+			{
+				//message received from server is a pollID
+				System.out.println("TRUE");
+				Long id = Long.parseLong(input.substring(input.indexOf("$") + 2));
+				AdminClient.newPollId = id;
+				System.out.println(id);
+				//allow admin client use newPollID
+				adminClient.poll_sem.release();
+				System.out.println("TRUE");
+				try {
+					adminClient.poll_sem.acquire();
+					System.out.println("TRUE");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+			else
+			{
+				
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		
+		}
+		
+			
+			
+	}
+	
 }

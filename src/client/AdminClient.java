@@ -334,7 +334,7 @@ class MessageListener extends Thread
 	public void run()
 	{
 		String input;
-		while(true)
+		while(socket.isClosed() == false)
 		{
 		try {
 			input = fromServer.readLine();
@@ -345,13 +345,13 @@ class MessageListener extends Thread
 				System.out.println("TRUE");
 				Long id = Long.parseLong(input.substring(input.indexOf("$") + 2));
 				AdminClient.newPollId = id;
-				System.out.println(id);
+				//System.out.println(id); //DEBUG PRINT
 				//allow admin client use newPollID
 				adminClient.poll_sem.release();
-				System.out.println("TRUE");
+				
 				try {
 					adminClient.poll_sem.acquire();
-					System.out.println("TRUE");
+			
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

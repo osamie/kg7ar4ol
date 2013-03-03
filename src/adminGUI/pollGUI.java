@@ -1,3 +1,9 @@
+/*
+ * PollGUI
+ * Displays the information for the poll.
+ * 
+ */
+
 package adminGUI;
 
 import org.eclipse.jface.action.MenuManager;
@@ -18,7 +24,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 
 public class pollGUI extends ApplicationWindow {
 
-	private long numAnswers;
+	private long numOptions;
 	private long pollID;
 	/**
 	 * Create the application window.
@@ -30,7 +36,7 @@ public class pollGUI extends ApplicationWindow {
 		addMenuBar();
 		addStatusLine();
 		
-		numAnswers = options;
+		numOptions = options;
 		pollID = pollId;
 		
 	}
@@ -43,11 +49,12 @@ public class pollGUI extends ApplicationWindow {
 	protected Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(null);
-		ProgressBar votingBar[] = new ProgressBar[(int) numAnswers];
-		Label lblVotes[] = new Label[(int) numAnswers];
-		Label lblAnswers[] = new Label[(int) numAnswers];
-		
-		for(int i = 0; i < numAnswers; i++)
+		ProgressBar votingBar[] = new ProgressBar[(int) numOptions];
+		Label lblVotes[] = new Label[(int) numOptions];
+		Label lblAnswers[] = new Label[(int) numOptions];
+		//Creates the content based on the number of options.
+		//The window is sized accordingly and the positioning.
+		for(int i = 0; i < numOptions; i++)
 		{
 			lblVotes[i] = new Label(container, SWT.NONE);
 			lblVotes[i].setBounds(460, 60 + i*35, 100, 15);
@@ -122,7 +129,7 @@ public class pollGUI extends ApplicationWindow {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(550, (int) (numAnswers*35 + 120));
+		return new Point(550, (int) (numOptions*35 + 120));//Size of window is based on the number of options.
 		
 	}
 }

@@ -1,3 +1,10 @@
+/*
+ * Admin GUI
+ * GUI for the admin client.
+ * GUI creates an instance of AdminClient and the GUI is attached to the AdminClient.
+ * Extracts information from the GUI and sends requests to the server.
+ * 
+ */
 package adminGUI;
 
 import org.eclipse.jface.action.MenuManager;
@@ -25,14 +32,15 @@ import org.eclipse.swt.widgets.Slider;
 
 import server.PollServer;
 import client.AdminClient;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 
 public class adminGUI extends ApplicationWindow {
-	private Text txtSampledomaincom;
+	private Text text_email;
 	private Text text_question;
-	private Text text_2;
+	
 	private static AdminClient admin;
-	private int maxOptions = 30;
+	private int maxOptions = 10;
 	/**
 	 * Create the application window.
 	 */
@@ -59,7 +67,7 @@ public class adminGUI extends ApplicationWindow {
 	 * @param parent
 	 */
 	@Override
-	protected Control createContents(Composite parent) {
+	protected Control createContents(final Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		
 		final List list_Polls = new List(container, SWT.BORDER | SWT.V_SCROLL);
@@ -72,11 +80,11 @@ public class adminGUI extends ApplicationWindow {
 		final List list_Active = new List(container, SWT.BORDER | SWT.V_SCROLL);
 		list_Active.setBounds(14, 238, 177, 138);
 		
-		txtSampledomaincom = new Text(container, SWT.BORDER);
-		txtSampledomaincom.setText("sample@domain.com");
-		txtSampledomaincom.setBounds(282, 14, 181, 21);
+		text_email = new Text(container, SWT.BORDER);
+		text_email.setText("sample@domain.com");
+		text_email.setBounds(282, 14, 181, 21);
 		
-		Label lblEmailAddress = new Label(container, SWT.NONE);
+		final Label lblEmailAddress = new Label(container, SWT.NONE);
 		lblEmailAddress.setBounds(469, 15, 94, 15);
 		lblEmailAddress.setText("Email Address");
 		
@@ -85,11 +93,12 @@ public class adminGUI extends ApplicationWindow {
 		
 		
 		
-		Label lblQuestion = new Label(container, SWT.NONE);
+		final Label lblQuestion = new Label(container, SWT.NONE);
 		lblQuestion.setBounds(469, 51, 55, 15);
 		lblQuestion.setText("Question");
 		
 		final Combo combo_answers = new Combo(container, SWT.NONE);
+		combo_answers.setToolTipText("Select the number of options the voters can choose. Must be an integer and within the max limit.");
 		String items[] = new String[maxOptions];
 		for(int i = 0; i < maxOptions; i++)
 		{
@@ -98,12 +107,9 @@ public class adminGUI extends ApplicationWindow {
 		combo_answers.setItems(items);
 		combo_answers.setBounds(282, 74, 55, 23);
 		
-		Label lblNumberOfAnswers = new Label(container, SWT.NONE);
+		final Label lblNumberOfAnswers = new Label(container, SWT.NONE);
 		lblNumberOfAnswers.setBounds(343, 82, 120, 15);
 		lblNumberOfAnswers.setText("Number of Answers");
-		
-		final Label label_answers = new Label(container, SWT.NONE);
-		label_answers.setBounds(471, 82, 153, 15);
 		
 		Label lblCreatedPolls = new Label(container, SWT.NONE);
 		lblCreatedPolls.setBounds(10, 10, 94, 15);
@@ -115,65 +121,90 @@ public class adminGUI extends ApplicationWindow {
 		btnCreatePoll.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * 	 Create Poll button.
+			 * Creates a poll by sending a request to the server. 
+			 * Information is extracted from the GUI and the information is then constructed into a 
+			 * string and is sent to the sever. 
+			 * The information is verified before being sent.
 			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String numOfOptions = combo_answers.getText();
-				String email = txtSampledomaincom.getText();
-				String answerString = "";;
-				Boolean valid = true;
-				long pollID;
+				String email = text_email.getText();
+				String answerString = "";
+				Boolean valid = true;	//Ensures the information in valid.
+				long pollID;			//Poll ID which is returned from the server.
 
-				try
+				lblQuestion.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+				lblEmailAddress.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+				lblNumberOfAnswers.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+				
+				try	//Ensures the number of options is an integer.
 				{
 					Integer.parseInt(numOfOptions);
 				}
 				catch(NumberFormatException e1)
 				{
-					label_answers.setText("Select a number value.");
+					lblNumberOfAnswers.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
 					valid = false;
 				}
-				if(valid!= false)
+				if(valid == true)	//Ensures the number of Options is within the limit of options and is not 0.
 				{
 					if(numOfOptions== "" || Integer.parseInt(numOfOptions) > maxOptions || Integer.parseInt(numOfOptions)<1)
 					{
-						label_answers.setText("Select the amount of answers.");
+						
+						lblNumberOfAnswers.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
 						valid = false;
 					}
 				}
-				if(text_question.getText().equals("") == true)
+				if(text_question.getText().equals("") == true)	//Ensures a question is entered.
 				{
 					valid = false;
-					text_question.setText("Enter a question.");
+					lblQuestion.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
 				}
-				if(email == "" || email.contains("@") == false || email.contains(".") == false)
+				if(email == "" || email.contains("@") == false || email.contains(".") == false)	//Ensures a valid email is entered and in the correct format: contains a @ and a .
 				{
-					txtSampledomaincom.setText("Invalid Email Address");
+					lblEmailAddress.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
 					valid = false;
 				}
-				if(valid == true)
+				/*
+				 * Creates an answersGUI that will get the options the voters can vote for.
+				 */
+				if(valid == true)	
 				{
 					try{
-						answersGUI answers = new answersGUI(numOfOptions);
+						optionsGUI answers = new optionsGUI(numOfOptions);
+						parent.setVisible(false);
 						answers.setBlockOnOpen(true);
 						answers.open();
-						while(answers.done == 0)
-						{			}
-						answerString = answers.answersValue;
+						while(answers.done == 0)	//Need some sort of blocking, wait/notify
+						{}
+						
+						answerString = answers.optionsValue;
+						parent.setVisible(true);
 						System.out.println(answerString);
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
 				}
+				/*
+				 * Constructs the string that will be sent to the server.
+				 * Receives the pollID from the server.
+				 * Adds the poll id and the number of options to the active and created polls lists.
+				 */
 				if(valid == true)
 				{	
-					String message = "";
+					String message = "";	
+					//Constructs the string to be sent to the server. 
+					//Format: email|questions|number of options|Options1|Options2|Option3|etc...
 					message = email + "|" + text_question.getText() +"|"+ numOfOptions + "|" + answerString;
 						
-					pollID = admin.createPoll(message);//blocking 
+					pollID = admin.createPoll(message);//blocking, Returns the poll ID.
 					
 					
-					label_answers.setText("");
+					lblQuestion.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+					lblEmailAddress.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+					lblNumberOfAnswers.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+					
 					list_Polls.add(String.valueOf(pollID) + " - " + numOfOptions);
 					list_Active.add(String.valueOf(pollID)+ " - " + numOfOptions);
 				}
@@ -188,19 +219,24 @@ public class adminGUI extends ApplicationWindow {
 		btnPausePoll.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * Pause Poll
+			 * Pauses the poll by sending the request to the server.
+			 * Moves the pollId from the active polls list to the paused polls list.
 			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				
 				if(list_Active.getSelectionIndex()!=-1 && list_Active.getItemCount()!=0)
 				{
-					int focusedIndex = list_Active.getFocusIndex();
+					int focusedIndex = list_Active.getFocusIndex();	//Gets the pollID from the list.
 					String temp = list_Active.getItem(focusedIndex);
 					temp = temp.substring(0, temp.indexOf(" ")-1);
-					System.out.println(temp);
-					admin.pausePoll(temp);
+					//System.out.println(temp); //Debug Print.
+					admin.pausePoll(temp);	//Sends request to the server.
+					//Adds the poll to the paused list and removes it from the active list.
 					list_Paused.add(list_Active.getItem(focusedIndex));
 					list_Active.remove(focusedIndex);
+					
+					//Logic for moving the focused item in the list to the next appropriate list item.
 					if(focusedIndex == 0)
 					{
 						if(list_Active.getItemCount() == 0)
@@ -230,6 +266,8 @@ public class adminGUI extends ApplicationWindow {
 		btnResumePoll.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * Resume Poll Button
+			 *  Resumes the poll by sending the request to the server.
+			 * Moves the pollId from the paused polls list to the active polls list.
 			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -238,10 +276,13 @@ public class adminGUI extends ApplicationWindow {
 					int focusedIndex = list_Paused.getFocusIndex();
 					String temp = list_Paused.getItem(focusedIndex);
 					temp = temp.substring(0, temp.indexOf(" ")-1);
-					System.out.println(temp);
-					admin.resumePoll(temp);
+					//System.out.println(temp); 				//Debug Print
+					admin.resumePoll(temp);						//Sends request to the server.
+					//Moves the poll id from the paused list to the active list.
 					list_Active.add(list_Paused.getItem(focusedIndex));
 					list_Paused.remove(focusedIndex);
+					
+					//Logic for moving the focused item in the list to the next appropriate list item.
 					if(focusedIndex == 0)
 					{
 						if(list_Paused.getItemCount() == 0)
@@ -270,6 +311,14 @@ public class adminGUI extends ApplicationWindow {
 		
 		Button btnClearPoll = new Button(container, SWT.NONE);
 		btnClearPoll.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * Clear Poll Button
+			 * Clears the polls information by sending the request to the server.
+			 * 
+			 *	TODO Possible
+			 *		clear the active poll id information being displayed if observer doesnt, but the observer pattern should.
+			 * 
+			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(list_Polls.getFocusIndex()!=-1)
@@ -288,6 +337,8 @@ public class adminGUI extends ApplicationWindow {
 		btnStopPoll.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * Stop Button
+			 * Stops the poll by sending the request to the server.
+			 * Deletes the list item from the created polls list and either the active or paused list depending on the state.
 			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -295,9 +346,12 @@ public class adminGUI extends ApplicationWindow {
 				{
 					int index = list_Polls.getSelectionIndex();
 					String temp = list_Polls.getItem(index);
-					String pollId = temp.substring(temp.lastIndexOf(" ") + 1);
-					admin.stopPoll(pollId);
-					list_Polls.remove(index);
+					String pollId = temp.substring(temp.lastIndexOf(" ") + 1);	//get poll id from list.
+					
+					admin.stopPoll(pollId);	//Send request to the server.
+					list_Polls.remove(index); //remove item from list of polls list.
+					
+					//Logic for moving the focused item in the list to the next appropriate list item.
 					if(list_Active.indexOf(temp) != -1)	
 					{
 						list_Active.remove(temp);
@@ -337,16 +391,21 @@ public class adminGUI extends ApplicationWindow {
 		
 		Button btnDisplayPoll = new Button(container, SWT.NONE);
 		btnDisplayPoll.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * Display Poll Button
+			 * Creates a pollGUI which displays the information about the poll.
+			 * 
+			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				
 				if(list_Polls.getSelectionIndex()!=-1 && list_Polls.getItemCount()!=0)
 				{
 					int index = list_Polls.getSelectionIndex();
-					String temp = list_Polls.getItem(index);
+					String temp = list_Polls.getItem(index);	//Gets poll ID
 					String pollId = temp.substring(temp.lastIndexOf(" ") + 1);
 					
-					pollGUI poll = new pollGUI(Long.valueOf(temp.substring(temp.lastIndexOf(" ") + 1)),Long.valueOf(pollId));
+					pollGUI poll = new pollGUI(Long.valueOf(temp.substring(temp.lastIndexOf(" ") + 1)),Long.valueOf(pollId)); //Creates the Poll GUI
 					poll.setBlockOnOpen(true);
 					poll.open();
 					
@@ -412,7 +471,7 @@ public class adminGUI extends ApplicationWindow {
 	 */
 	public static void main(String args[]) {
 		
-		int port = PollServer.ADMIN_PORT;		
+		int port = PollServer.ADMIN_PORT;		//Default port
 		if (args.length > 0) {
 		    try {
 		        port = Integer.parseInt(args[0]);
@@ -421,7 +480,7 @@ public class adminGUI extends ApplicationWindow {
 		        System.exit(1);
 		    }
 		}
-		
+		//Creates the instance of an AdminClient with the port sent in either from command line argument or the default port.
 		admin = new AdminClient(port);
 		try {
 			adminGUI window = new adminGUI();
@@ -431,7 +490,7 @@ public class adminGUI extends ApplicationWindow {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		admin.disconnect();
+		admin.disconnect();	//Disconnect once GUI is closed.
 	}
 
 	/**

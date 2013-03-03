@@ -1,3 +1,8 @@
+/*
+ * AnswersGUI
+ * GUI that prompts the user for the options that the voters can vote for.
+ */
+
 package adminGUI;
 
 import org.eclipse.jface.action.MenuManager;
@@ -15,17 +20,20 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.wb.swt.SWTResourceManager;
 
-public class answersGUI extends ApplicationWindow {
-	private Text[] answers;
-	public String answersValue;
+public class optionsGUI extends ApplicationWindow {
+	private Text[] options;
+	public String optionsValue;
 	private int numOptions;
 	public int done = 0;
+	
 	/**
 	 * Create the application window.
 	 */
-	public answersGUI(String numOfAnswers) {
+	public optionsGUI(String numOfAnswers) {
 		super(null);
+		setShellStyle(SWT.TITLE);
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
 		addMenuBar();
@@ -41,15 +49,15 @@ public class answersGUI extends ApplicationWindow {
 		{
 			if(i ==0 && i!= numOptions-1)
 			{
-				value = answers[i].getText() + ",";
+				value = options[i].getText() + ",";
 			}
 			else if(i == numOptions-1)
 			{
-				value = value + answers[i].getText();
+				value = value + options[i].getText();
 			}
 			else
 			{
-				value = value + answers[i].getText() + ",";
+				value = value + options[i].getText() + ",";
 			}
 		}
 		System.out.println(value);
@@ -61,37 +69,46 @@ public class answersGUI extends ApplicationWindow {
 	 */
 	@Override
 	protected Control createContents(Composite parent) {
-		
+		final Label lblOptions[] = new Label[numOptions];
 		Composite container = new Composite(parent, SWT.NONE);
 		Button btnNewButton = new Button(container, SWT.NONE);
 		btnNewButton.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * Done Button.
+			 * Collects the information from the combo boxes and will set the global variable to the constructed 
+			 * string so that the admin Client can grab it.
 			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				
 				int valid = 0;
-				answersValue ="";
+				optionsValue ="";
+				//Constructs the options to be Option1|Option2|Option3|etc...
 				for(int i = 0;i<numOptions;i++)
 				{
-					String temp = answers[i].getText();
-					if(answers[i].getText().equals("") == true)
+					String temp = options[i].getText();
+					//Checks if any of the options are blank.
+					if(options[i].getText().equals("") == true)
 					{
 						valid = 1;
-						answers[i].setText("Enter a Value");
-					}
-					if(i ==0 && i!= numOptions-1)
-					{
-						answersValue = answers[i].getText() + "|";
-					}
-					else if(i == numOptions-1)
-					{
-						answersValue = answersValue + answers[i].getText();
+						lblOptions[i].setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
+						
 					}
 					else
 					{
-						answersValue = answersValue + answers[i].getText() + "|";
+						lblOptions[i].setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+					}
+					if(i ==0 && i!= numOptions-1)
+					{
+						optionsValue = options[i].getText() + "|";
+					}
+					else if(i == numOptions-1)
+					{
+						optionsValue = optionsValue + options[i].getText();
+					}
+					else
+					{
+						optionsValue = optionsValue + options[i].getText() + "|";
 					}
 				}
 				if(valid == 0)
@@ -102,28 +119,30 @@ public class answersGUI extends ApplicationWindow {
 				
 			}
 		});
-		Label lblAnswers[] = new Label[numOptions];
+		//Creates the objects on the GUI
+		//Posiitons everything according to how many options there will be.
+		
 		
 		
 		btnNewButton.setBounds(77, numOptions*35 + 30, 68, 23);
 		btnNewButton.setText("Done");
 		
-		answers = new Text[numOptions];
+		options = new Text[numOptions];
 		for(int i = 0; i <numOptions; i++)
 		{
-			lblAnswers[i] = new Label(container, SWT.NONE);
-			lblAnswers[i].setBounds(10, 35*i + 35, 61, 20);
-			lblAnswers[i].setText("Answer " + (i+1) + ":");
+			lblOptions[i] = new Label(container, SWT.NONE);
+			lblOptions[i].setBounds(10, 35*i + 35, 61, 20);	
+			lblOptions[i].setText("Option " + (i+1) + ":");
 			
-			answers[i] = new Text(container, SWT.BORDER);
-			answers[i].setBounds(75, 35*i + 35, 155, 20);
+			options[i] = new Text(container, SWT.BORDER);
+			options[i].setBounds(75, 35*i + 35, 155, 20);
 		}
 				
 		
 		
 		Label lblNewLabel_1 = new Label(container, SWT.NONE);
 		lblNewLabel_1.setBounds(77, 10, 89, 13);
-		lblNewLabel_1.setText("Input Answers");
+		lblNewLabel_1.setText("Input Option");
 
 		return container;
 	}
@@ -143,7 +162,7 @@ public class answersGUI extends ApplicationWindow {
 	 */
 	public static void main(String args[]) {
 		try {
-			answersGUI window = new answersGUI("12");
+			optionsGUI window = new optionsGUI("12");
 			window.setBlockOnOpen(true);
 			window.open();
 			Display.getCurrent().dispose();
@@ -167,6 +186,6 @@ public class answersGUI extends ApplicationWindow {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(260, numOptions*35 + 110);
+		return new Point(260, numOptions*35 + 130);	//Size of the window depends on how many options there are.
 	}
 }

@@ -177,7 +177,7 @@ public class adminGUI extends ApplicationWindow {
 						answers.setBlockOnOpen(true);
 						answers.open();
 						while(answers.done == 0)	//Need some sort of blocking, wait/notify
-						{}
+						{	}
 						
 						answerString = answers.optionsValue;
 						parent.setVisible(true);

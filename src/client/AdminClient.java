@@ -14,7 +14,7 @@ import server.PollServer;
 
 public class AdminClient {
 
-	Semaphore poll_sem;
+	Semaphore poll_sem, block_sem;
 	static Long newPollId;
 	
 	Socket adminSocket;
@@ -53,6 +53,7 @@ public class AdminClient {
 			System.exit(1);
 		} 
 		poll_sem = new Semaphore(1);//initialize semaphore value to 1
+		block_sem = new Semaphore(1);
 		messageReciever = new MessageListener(this);
 		messageReciever.start();
 		
@@ -74,20 +75,28 @@ public class AdminClient {
 		 * Connection is already being done in the constructor 
 		 */
 		String msgToSend = "->" + message;
-	
+		String temp = "";
+		try {
+			block_sem.acquire();	//Acquires before senging.
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		outToServer.println(msgToSend); //sends the request
 		
 		//update GUI with "waiting for pollID" status 
-		String temp = "";
+		
 		
 		//Blocking wait for messageListener to receive and update this.newPollID 
 		try {
-			poll_sem.acquire();
+			poll_sem.acquire();	//waits until the receiver has changed the poll id and releases its semaphore.
+			block_sem.release(); //Releases its semaphore
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally{
-			poll_sem.release();
+			poll_sem.release();	//Releases the second semaphore.
+			
 		}
 
 		return newPollId; //get newPollID
@@ -345,13 +354,14 @@ class MessageListener extends Thread
 				System.out.println("TRUE");
 				Long id = Long.parseLong(input.substring(input.indexOf("$") + 2));
 				AdminClient.newPollId = id;
-				//System.out.println(id); //DEBUG PRINT
+				System.out.println(id);
 				//allow admin client use newPollID
 				adminClient.poll_sem.release();
 				
 				try {
-					adminClient.poll_sem.acquire();
-			
+					adminClient.block_sem.acquire();//Waits until the client has the poll_sem
+					adminClient.poll_sem.acquire();//Waits until the admin is done with the pollID
+					adminClient.block_sem.release();//releases for next run through
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

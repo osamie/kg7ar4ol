@@ -1,8 +1,11 @@
 *.class
 
 # Package Files #
-#*.jar
 *.war
 *.ear
+
+#swt library would vary depending on JVM and OS type
+*swt.jar  
+
 
 *.DS_Store

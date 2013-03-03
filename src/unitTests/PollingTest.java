@@ -67,7 +67,7 @@ public class PollingTest {
 		//Creates polls and verifies if the polls created pollIds
 		for(int i = 0; i < numberOfPolls; i++)
 		{
-			//pollIds[i] = admin.createPoll("4", "1@asd.ca");
+			pollIds[i] = admin.createPoll("4", "1@asd.ca");
 			if(pollIds[i] == 0) testResult = false;
 		}
 		//Test sending a vote to the polls.
@@ -85,11 +85,11 @@ public class PollingTest {
 	 */
 	public boolean adminMessages()
 	{
-		/*Boolean testResult = true;
+		Boolean testResult = true;
 		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT);
 		Client testClient = new Client(PollServer.VOTING_PORT);
 		//Creating Poll
-		long pollId = admin.createPoll("5email@domain.ca");
+		long pollId = admin.createPoll("5", "email@domain.ca");
 		if(pollId == 0) testResult = false;	//Will fail if no pollId is returned.
 		
 		//startingPoll
@@ -113,8 +113,7 @@ public class PollingTest {
 		testClient.vote(pollId,(long) 3);// Will send a vote to see if the poll has stopped.
 		
 		return testResult;
-	*/	
-		return true;
+		
 	}
 	/**
 	 *Test connecting multiple voters to the server.   

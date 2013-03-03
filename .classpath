@@ -3,5 +3,11 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="gui-resources/eclipse-jface-2.1.0.jar"/>
+	<classpathentry kind="lib" path="gui-resources/swt.jar"/>
+	<classpathentry kind="lib" path="gui-resources/org.eclipse.core.commands_3.6.0.I20100512-1500.jar"/>
+	<classpathentry kind="lib" path="gui-resources/org.eclipse.equinox.common_3.5.0.v20090520-1800.jar"/>
+	<classpathentry kind="lib" path="gui-resources/org.eclipse.ui.workbench_3.6.0.I20100603-1100.jar"/>
+	<classpathentry kind="lib" path="gui-resources/org.eclipse.osgi-3.7.0.v20110221.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

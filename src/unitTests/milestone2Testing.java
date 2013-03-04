@@ -35,71 +35,136 @@ public class milestone2Testing {
 	}
 
 	@Test
-	public final void testAdminConnections() {
-		int testCount = 1;
-		assertTrue(connectionTest(testCount));
+	public final void testInvalidVotes()
+	{
+		assertTrue(invalidVotesTest());
+	}
+	
+	@Test
+	public final void testSessionControl() {
+		assertTrue(sessionControlTest());
 	}
 	@Test
-	public final void testVotes()
+	public final void testRepeatedVotes()
 	{
 		int testCount = 5;
-		assertTrue(voteTest(testCount));
+		assertTrue(repeatedVotesTest(testCount));
 	}
 	@Test
-	public final void testVoterConnections()
+	public final void testLateVotes()
 	{
-		int testCount = 5;
-		assertTrue(voteConnectionTest(testCount));
+		assertTrue(lateVotesTest());
 	}
+	
 	@Test
-	public final void testAdminMessages()
+	public final void testRealTime()
 	{
-		
-		assertTrue(adminMessages());
+		assertTrue(realTimeTest());
 	}
-	@Test
-	public final void testMultiplePolls()
+	
+	
+	private boolean sessionControlTest()
 	{
-		int testCount = 5;
-		assertTrue(multiplePolls(testCount));
+		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT);
+		long pollId = admin.createPoll("TEST@TEST.com|2|Poll ID|Yes|No");
+		
+		/*
+		 * If(server.poll.getstate(pollId) != RUNNING)
+		 * {
+		 * return  false;
+		 * }
+		 */
+		
+		admin.pausePoll(String.valueOf(pollId));
+		
+		/*
+		 * if(server.poll.getstate(pollId) != PAUSED) 
+		 * {
+		 * return false;
+		 * }
+		 */
+		
+		admin.resumePoll(String.valueOf(pollId));
+		
+		/*
+		 * if(server.poll.getstate(pollId) != RUNNING)
+		 * {
+		 * return false;
+		 * }
+		 */
+		
+		admin.stopPoll(String.valueOf(pollId));
+		
+		/*
+		 * if (server.poll.getstate(pollId) != STOPPED) 
+		 * {
+		 * return false;
+		 * }
+		 */
+		
+		
+		return true;
 	}
-	/**
-	 *Test creating multiple polls.   
-	 * @param numberOfPolls
-	 * @return false if polls fail to be created
-	 */
-	public boolean multiplePolls(int numberOfPolls)
-	{
-		Boolean testResult = true;
+	
+	private boolean invalidVotesTest() {
 		
+		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT);
+		Client testClient = new Client(PollServer.VOTING_PORT);
+		long pollId = admin.createPoll("TEST@TEST.com|2|Poll ID|Yes|No");
 		
-		return testResult;
+		testClient.vote(pollId + 1,1);
+		
+		/*
+		 * if (server.poll.getVotes(pollId,1) != 0) 
+		 * {
+		 * return false;
+		 * }
+		 */
+		
+		testClient.vote(pollId,3);
+		
+		/*
+		 * if (server.poll.getVotes(pollId,1) != 0 || server.poll.getVotes(pollId,2) != 0) 
+		 * {
+		 * return false;
+		 * }
+		 */
+		
+		return true;
 	}
-	/**
-	 *Test sending the different admin commands.   
-	 * @param void
-	 * @return false if any of the messages fail
-	 */
-	public boolean adminMessages()
-	{
-		Boolean testResult = true;
+	private boolean lateVotesTest() {
 		
-		return testResult;
+		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT);
+		Client testClient = new Client(PollServer.VOTING_PORT);
+		long pollId = admin.createPoll("TEST@TEST.com|2|Poll ID|Yes|No");
 		
+		admin.pausePoll(String.valueOf(pollId));
 		
+		testClient.vote(pollId,1);
+		
+		/*
+		 * if (server.poll.getVotes(pollId, 1) != 0)
+		 * {
+		 * return false;
+		 * } 
+		 */
+		
+		admin.stopPoll(String.valueOf(pollId));
+		testClient.vote(pollId,1);
+		
+		/*
+		 * if (server.poll.getVotes(pollId, 1) != 0)
+		 * {
+		 * return false;
+		 * } 
+		 */
+		
+		return true;
 	}
-	/**
-	 *Test connecting multiple voters to the server.   
-	 * @param numberOfVoters
-	 * @return false if any of the connections fail
-	 */
-	public boolean voteConnectionTest(int numberOfVoters)
-	{
-		Boolean testResult = true;
+	
+	private boolean realTimeTest() {
 		
-		
-		return testResult;
-		
+		return false;
 	}
 	/**
 	 *Test sending multiple messages to the server one
@@ -107,44 +172,30 @@ public class milestone2Testing {
 	 * @param numberOfVotes
 	 * @return false if any of the votes fail
 	 */
-	public boolean voteTest(int numberOfVotes)
+	public boolean repeatedVotesTest(int numberOfVotes)
 	{
-		
-		Boolean testResult = true;
 		Client testClient = new Client(PollServer.VOTING_PORT);
 		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT);
 		long pollID ;
 		pollID = admin.createPoll("gasg@gsag.com|2|who are you|yes|no");
 		
-		
 		for(int i = 0; i <numberOfVotes; i++)
 		{		
-			testClient.vote((long)12345,2);	
+			testClient.vote(pollID,1);	
 		}
-		
-		return testResult;
-	}
-	/**
-	 *Test admin connections to server    
-	 * @param numberOfAdmins
-	 * @return false if any of the connections fail
-	 */
-	public boolean connectionTest(int numberOfAdmins){
-		Boolean testResult = true;
-		PollServer server = new PollServer();
-		
-		AdminClient []admins = new AdminClient[numberOfAdmins];
-		server.startListeners(); //start listening for connections
-		
-		//Create Admins and test their connections  
-		for(int i = 0; i<admins.length;i++){
-			if (!(new AdminClient(PollServer.ADMIN_PORT).isConnected())){
-				testResult = false;
-				break;
-			}
+		/*if(server.poll.getvotes(pollID,1) == 1)
+		{
+			return true;
 		}
-		return testResult;
+		else
+		{
+			return false;
+		}
+		*/
+		return true;
 	}
+	
+	
 	
 
 }

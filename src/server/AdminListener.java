@@ -21,7 +21,7 @@ class AdminListener extends Thread{
     protected PollsManager pollsManager;
 	
 	public AdminListener(int port,PollsManager manager) {
-		pollsManager = manager;
+		pollsManager = PollsManager.getInstance();
 		serverSocket = null;
 		try {
 			serverSocket = new ServerSocket(port);
@@ -74,7 +74,7 @@ class AdminWorker extends Thread{
 		 * - reassignment of clientSocket variable in Listener.listen()
 		 */
 		clientSocket = socket;
-		pollsManager = manager;
+		pollsManager = PollsManager.getInstance();
 		try {
 			outToClient = new PrintWriter(clientSocket.getOutputStream(), true);
 			in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));

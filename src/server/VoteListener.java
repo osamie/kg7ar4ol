@@ -18,7 +18,7 @@ class VoteListener extends Thread {
 	private PollsManager pollsManager;
 	
 	public VoteListener(int port,PollsManager manager) {
-		pollsManager = manager; 
+		pollsManager = PollsManager.getInstance(); 
 		try {
 			receiveSocket = new DatagramSocket(port);
 		} catch (SocketException e) {
@@ -70,23 +70,53 @@ class VotesHandler extends Thread{
 	DatagramPacket receivedPacket;
 	public VotesHandler(DatagramPacket packet,PollsManager manager){
 		receivedPacket = packet;
-		pollsManager = manager;
+		pollsManager = PollsManager.getInstance();
 	}
 	
 	/**
 	 * Parse and then update the necessary poll  
 	 */
-	private void processRequest(String req){//String req){
+	private void processRequest(String req){
 		//TODO parse req properly 
 		String []request = req.split(" ");
 		System.out.println("here but" + request[0] + "and" + request[1]);
 		if(request.length<2) return;
 		
 		Long pollID = Long.parseLong(request[0]);
-		int choice = Integer.parseInt(request[1]);
+		int choice = Integer.parseInt(request[1].trim());
 		System.out.println("Voting option:" + pollID + " for pollID:" + choice);
-//		pollsManager.addVote(pollID, choice, 0);
 		
+		
+		
+		int[] voteStats = pollsManager.getVotes(pollID);
+		
+		if(voteStats==null){
+			System.out.println("Poll exists:" + pollsManager.hasPoll(pollID));
+			System.err.println("Could not get vote stats!");
+		}
+		else{
+			System.out.println("choice count before:"+ voteStats[choice]);
+			pollsManager.addVote(pollID, choice, 0);
+			voteStats = pollsManager.getVotes(pollID);
+			System.out.println("choice count after:"+ voteStats[choice]);
+		}
+		
+//		System.out.println("choice count before:"+ countVotes(voteStats));
+		
+	}
+	
+	
+	/**
+	 * Count total number of votes
+	 * @param voteStats
+	 * @return
+	 */
+	private int countVotes(int[] voteStats){
+		int totalVoteCount=0;
+		for(int i=0;i<voteStats.length;i++){
+			totalVoteCount+=voteStats[i];
+		}
+		return totalVoteCount;
 	}
 	
 	@Override

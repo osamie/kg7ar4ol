@@ -3,15 +3,40 @@ package model;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * PollsManager is responsible for managing the collection of polls
+ * in the system.
+ *  
+ * @author osamie
+ *
+ */
 public class PollsManager {
 	private ConcurrentHashMap<Long, Poll> polls;
 	private Random random;
-	public PollsManager() {
+	
+	/**
+	 * 
+	 *Initialization on demand class holder
+	 */
+	private static class InstanceHolder{
+		//initialization phase on the JVM is guaranteed to be serial or non-concurrent
+		public static PollsManager instance =  new PollsManager();
+	}
+	
+	private PollsManager() {
 		polls = new ConcurrentHashMap<Long, Poll>();
 		random = new Random();
 	}
-	
-	
+	/**
+	 * The InstanceHolder handles the initialization of the instance.
+	 * Since the initialization phase on the JVM is non-concurrent, 
+	 * the instance will only be created once and no further synchronization
+	 * will be needed here.
+	 *  
+	 */
+	public static PollsManager getInstance(){
+		return InstanceHolder.instance;
+	}
 	/**
 	 * Create a new Poll and add it to the collection of polls
 	 * @return pollID
@@ -77,21 +102,35 @@ public class PollsManager {
 		}
 	}
 	
+	public boolean hasPoll(long pollID){
+		return polls.contains(pollID);
+	}
+	
 	public void addVote(long pollID,int optionIndex,int voterID){
 		boolean voteAdded=false;
 		if(polls.containsKey(pollID)){
 			voteAdded = polls.get(pollID).addVote(optionIndex,voterID);
+			voteAdded = true;
 		}
 		if(voteAdded){
 			//TODO notify observers
 		}
+		System.out.println("vote added?" + voteAdded);
 	}
 	
-	public int[] getVoteCount(long pollID){
+	/**
+	 * Returns the number of votes as an array. 
+	 * The index of the array represents the choice number.
+	 * The value at the index position represents the number 
+	 * of votes for that choice.
+	 * 
+	 * @param pollID
+	 * @return null if the poll does not exist and array of int otherwise 
+	 */
+	public int[] getVotes(long pollID){
 		int[] votes = null;
 		if(polls.containsKey(pollID)){
-			votes = polls.get(pollID).getVoteCount();
-			System.out.println("votes count:" + votes.length);
+			votes = polls.get(pollID).getVoteStats();
 		}
 		return votes;
 	}

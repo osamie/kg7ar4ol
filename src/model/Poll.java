@@ -27,7 +27,7 @@ public class Poll extends Observable {
 		//copy content of list to this.options
 		System.arraycopy(list, 0, options, 0, list.length); 
 		
-		this.currentState = PAUSED; //default state
+		this.currentState = RUNNING; //default state
 	}
 	
 	/**
@@ -78,7 +78,7 @@ public class Poll extends Observable {
 	 * Adds a vote for a specific option
 	 * @param option
 	 * @param voterID
-	 * @return true if the poll was sucessfully added to the poll
+	 * @return true if the poll was successfully added to the poll
 	 */
 	public synchronized boolean addVote(int optionIndex,int voterID){
 		//TODO Using voterID, check if voter has already voted or is anonymous
@@ -89,7 +89,7 @@ public class Poll extends Observable {
 		return false;
 	}
 	
-	public int[] getVoteCount(){
+	public int[] getVoteStats(){
 		return votesCount;
 	}
 	

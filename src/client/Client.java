@@ -37,7 +37,7 @@ public class Client {
 	         String message = pollID + " " + choice;
 	         
 	         byte msg[] = message.getBytes();
-	    	 sendPacket = new DatagramPacket(msg, msg.length,InetAddress.getLocalHost(), portNum);
+	    	 sendPacket = new DatagramPacket(msg, msg.length, InetAddress.getLocalHost(), portNum);
 	         sendReceiveSocket.send(sendPacket);         
 	     }
 	     catch (UnknownHostException e1)  { e1.printStackTrace(); System.exit(1); }

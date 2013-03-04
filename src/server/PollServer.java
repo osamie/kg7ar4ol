@@ -12,7 +12,7 @@ public class PollServer {
 	private PollsManager pollsManager;
 
 	public PollServer() {
-		pollsManager = new PollsManager();
+		pollsManager = PollsManager.getInstance();
 	}
 	
 	public void startListeners(){

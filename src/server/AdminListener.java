@@ -172,6 +172,7 @@ class AdminWorker extends Thread{
 			 * message format: pollID
 			 */
 			request = request.replace("(!)", "").trim();
+			
 			long pollID = Long.parseLong(request);
 			System.out.println("pollstate before:" + pollsManager.getPollState(pollID));
 			pollsManager.pausePoll(pollID);

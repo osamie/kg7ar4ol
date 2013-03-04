@@ -74,6 +74,10 @@ public class Poll extends Observable {
 		}
 	}
 	
+	public int getState() {
+		return currentState;
+	}
+	
 	/**
 	 * Adds a vote for a specific option
 	 * @param option

@@ -4,6 +4,9 @@ package unitTests;
 
 import static org.junit.Assert.assertTrue;
 
+import model.Poll;
+import model.PollsManager;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -13,14 +16,14 @@ import server.PollServer;
 import client.AdminClient;
 import client.Client;
 
-public class milestone2Testing {
+public class Milestone2Testing {
 
 	private int polls[] = new int[10];
 	int numOfPolls;
-	PollServer server;
+	static PollServer server;
 	
 	@BeforeClass 
-	public void method()
+	public static void method()
 	{
 		server = new PollServer();
 		server.startListeners();
@@ -66,8 +69,8 @@ public class milestone2Testing {
 	private boolean sessionControlTest()
 	{
 		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT);
-		long pollId = admin.createPoll("TEST@TEST.com|2|Poll ID|Yes|No");
-		
+		long pollID = admin.createPoll("TEST@TEST.com|2|Poll ID|Yes|No");
+		PollsManager manager = PollsManager.getInstance();
 		/*
 		 * If(server.poll.getstate(pollId) != RUNNING)
 		 * {
@@ -75,16 +78,17 @@ public class milestone2Testing {
 		 * }
 		 */
 		
-		admin.pausePoll(String.valueOf(pollId));
+		admin.pausePoll(String.valueOf(pollID));
 		
-		/*
-		 * if(server.poll.getstate(pollId) != PAUSED) 
-		 * {
-		 * return false;
-		 * }
-		 */
 		
-		admin.resumePoll(String.valueOf(pollId));
+		
+		  if(manager.getPollState(pollID) != Poll.PAUSED) 
+		  {
+		  return false;
+		  }
+		 
+		
+//		admin.resumePoll(String.valueOf(pollID));
 		
 		/*
 		 * if(server.poll.getstate(pollId) != RUNNING)
@@ -93,7 +97,7 @@ public class milestone2Testing {
 		 * }
 		 */
 		
-		admin.stopPoll(String.valueOf(pollId));
+//		admin.stopPoll(String.valueOf(pollID));
 		
 		/*
 		 * if (server.poll.getstate(pollId) != STOPPED) 

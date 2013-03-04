@@ -103,7 +103,15 @@ public class PollsManager {
 	}
 	
 	public boolean hasPoll(long pollID){
-		return polls.contains(pollID);
+		return polls.containsKey(pollID);
+	}
+	
+	public int getPollState(long pollID){
+		int state=-1;
+		if(polls.containsKey(pollID)){
+			state = polls.get(pollID).getState();
+		}
+		return state;
 	}
 	
 	public void addVote(long pollID,int optionIndex,int voterID){

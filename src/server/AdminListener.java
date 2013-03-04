@@ -124,26 +124,60 @@ class AdminWorker extends Thread{
 	private void processRequest(String request){
 		//TODO parse string
 		System.out.println("received request: " + request);
-		
+//		request = request.trim();
 		
 		if(request.contains("->"))
 		{
-			//TODO build options array by parsing request string
-			String[]optionsList = {"option1","option2"};
+			/*
+			 * Create a poll.
+			 * Message format: emailAddress | Question | #OfOptions | options... 
+			 */
+			request = request.replace("->", "");
 			
-			long pollID = pollsManager.createNewPoll(0, "default@email", optionsList);
-//			System.out.println("new pollID:" + pollID);
-			outToClient.println("$ " + String.valueOf(pollID));
+			String [] params = request.split("\\|");
+			if (params.length<4){
+				
+				return; //wrong format
+			}
+			else{
+				String emailAddress=params[0];
+				String pollQuestion = params[1];
+				System.out.println(params[2]);
+				int numOfOptions = Integer.parseInt(params[2]);
+				String[]optionsList = new String[numOfOptions];
+				int optionsCountIndex=3;
+				int paramsIndex=optionsCountIndex;
+				
+				//populate optionsList
+				for(int i=0;i<optionsList.length;i++){
+					if(paramsIndex>=params.length) break;
+					optionsList[i] = params[paramsIndex++];
+				}
+				
+				long pollID = pollsManager.createNewPoll(0, emailAddress, optionsList);
+				System.out.println("new pollID:" + pollID);
+				System.out.println("has poll?"+pollsManager.hasPoll(pollID));
+				outToClient.println("$ " + String.valueOf(pollID));
+			}
+			
 		}
 		else if(request.contains("(+)"))
 		{
 			//startPoll
-			
 		}
 		else if(request.contains("(!)"))
 		{
-			//pausePoll
-//			pollsManager.pausePoll(pollID);
+			/*
+			 * pausePoll
+			 * message format: pollID
+			 */
+			request = request.replace("(!)", "").trim();
+			long pollID = Long.parseLong(request);
+			System.out.println("pollstate before:" + pollsManager.getPollState(pollID));
+			pollsManager.pausePoll(pollID);
+			System.out.println("pollstate:" + pollsManager.getPollState(pollID));
+//			Poll 
+//			System.out.println();
 		}
 		else if(request.contains("(X)"))
 		{

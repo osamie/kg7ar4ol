@@ -206,7 +206,7 @@ public class adminGUI extends ApplicationWindow {
 					lblNumberOfOptions.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
 					
 					list_Polls.add(String.valueOf(pollID) + " - " + numOfOptions);
-					list_Paused.add(String.valueOf(pollID)+ " - " + numOfOptions);
+					list_Active.add(String.valueOf(pollID)+ " - " + numOfOptions);
 				}
 			}
 			

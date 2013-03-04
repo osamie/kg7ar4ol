@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Poll extends Observable {
 	private int adminID;
-	private int pollID;
+	private long pollID;
 	private String emailAddress;
 	private String[] options;
 	private int[] votesCount;
@@ -19,7 +19,7 @@ public class Poll extends Observable {
 	
 	
 	
-	public Poll(int pollID,int adminID,String emailAdress,String [] list) {
+	public Poll(long pollID,int adminID,String emailAdress,String [] list) {
 		//initialize class properties
 		this.adminID = adminID;
 		this.emailAddress = emailAdress; //user email address
@@ -44,7 +44,7 @@ public class Poll extends Observable {
 	 * Get the id for this poll
 	 * @return
 	 */
-	public int getPollID(){
+	public long getPollID(){
 		return pollID;
 	}
 	

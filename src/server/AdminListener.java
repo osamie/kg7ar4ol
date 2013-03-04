@@ -9,6 +9,8 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.Random;
 
+import model.PollsManager;
+
 
 /**
  * AdminListener is a TCP server where each worker accepts the admin messages
@@ -16,8 +18,10 @@ import java.util.Random;
 class AdminListener extends Thread{
 	private ServerSocket serverSocket;
     Socket clientSocket;
+    protected PollsManager pollsManager;
 	
-	public AdminListener(int port) {
+	public AdminListener(int port,PollsManager manager) {
+		pollsManager = manager;
 		serverSocket = null;
 		try {
 			serverSocket = new ServerSocket(port);
@@ -38,7 +42,7 @@ class AdminListener extends Thread{
 				clientSocket = serverSocket.accept(); //accept connection from ADMIN client
 							
 				System.out.println("New Admin connected");
-				new AdminWorker(clientSocket).start(); //assign a worker thread to server new client
+				new AdminWorker(clientSocket,pollsManager).start(); //assign a worker thread to server new client
 			} catch (SocketException e2) { System.out.println("Done"); System.exit(0); }
 			catch (IOException e) { e.printStackTrace(System.err); System.exit(1);  }
 		}
@@ -62,14 +66,15 @@ class AdminWorker extends Thread{
 	PrintWriter outToClient;
 	BufferedReader in;
 	Socket clientSocket;
+	private PollsManager pollsManager;
 	
-	
-	public AdminWorker(Socket socket) {
+	public AdminWorker(Socket socket, PollsManager manager) {
 		/*
 		 * TODO check for any referencing issues 
 		 * - reassignment of clientSocket variable in Listener.listen()
 		 */
 		clientSocket = socket;
+		pollsManager = manager;
 		try {
 			outToClient = new PrintWriter(clientSocket.getOutputStream(), true);
 			in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -119,23 +124,21 @@ class AdminWorker extends Thread{
 	private void processRequest(String request){
 		//TODO parse string
 		System.out.println("received request: " + request);
-		String option = request.substring(0,3);
-		if(request.contains("->") == true)
+//		String option = request.substring(0,3);
+		
+		if(request.contains("->"))
 		{
-			Random rdg = new Random();
-			long temp = 0;
-			//While(Check if ID exists)
-			//generate another id.
-			temp = rdg.nextLong();
-			outToClient.println("$ " + String.valueOf(temp));
-		}
-		else if(request.contains("->"))
-		{
+			//TODO build options array by parsing request string
+			String[]optionsList = {"option1","option2"};
 			
+			Long pollID = pollsManager.createNewPoll(0, "default@email", optionsList);
+			System.out.println("new pollID:"+pollID);
+			outToClient.println("$ " + String.valueOf(pollID));
 		}
 		else if(request.contains("(+)"))
 		{
 			//startPoll
+			
 		}
 		else if(request.contains("(!)"))
 		{
@@ -177,70 +180,4 @@ class AdminWorker extends Thread{
 		outToClient.close();
 		clientSocket.close();
 	}
-	/**
-	 * Sends a 'startPoll' request to server (i.e now allow votes for this poll)
-	 * @param pollID
-	 */
-	public void startPoll(String pollID) 
-	{
-		String msgToSend = "(+)";
-		
-		msgToSend = msgToSend + pollID;
-		
-		
-	}
-	
-	/**
-	 * Sends a 'pausePoll' request to server. Temporarily deactivate poll 
-	 * (i.e temporarily disallow votes for this poll)
-	 * 
-	 * @param pollID
-	 */
-	public void pausePoll(String pollID)
-	{
-		String msgToSend = "(!)";
-		
-		
-		msgToSend = msgToSend + pollID;
-		
-	}
-	
-	/**
-	 * Sends a 'stopPoll' request to server (i.e permanently deactivate the poll.
-	 * Results should be collected).
-	 * 
-	 * @param pollID
-	 */
-	public void stopPoll(String pollID)
-	{
-		String msgToSend = "(X)";
-		
-		msgToSend = msgToSend + pollID;
-	
-	}
-	
-	/**
-	 * Sends a 'clearPoll' request to the server (i.e discard all votes for this poll...poll remains active)
-	 * @param pollID
-	 */
-	public void clearPoll(String pollID)
-	{
-		String msgToSend = "(-)";
-			
-		msgToSend = msgToSend + pollID;
-	
-	}
-	
-	/**
-	 * Sends a 'resumePoll' request to server (i.e poll should be reactivated if not active)
-	 * @param pollID
-	 */
-	public void resumePoll(String pollID)
-	{
-		String msgToSend = "(0)";
-			
-		msgToSend = msgToSend + pollID;
-		
-	}
-	
 }

@@ -5,6 +5,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
+import model.PollsManager;
+
 /**
  * VoteListener is a UDP server where each worker accepts the 
  * voting messages. (One thread per poll listening to votes).
@@ -13,8 +15,10 @@ import java.net.SocketException;
 class VoteListener extends Thread {
 	private DatagramSocket receiveSocket = null;
 	private DatagramPacket receivePacket; 
+	private PollsManager pollsManager;
 	
-	public VoteListener(int port) {
+	public VoteListener(int port,PollsManager manager) {
+		pollsManager = manager; 
 		try {
 			receiveSocket = new DatagramSocket(port);
 		} catch (SocketException e) {

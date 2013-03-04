@@ -77,7 +77,7 @@ public class AdminClient {
 		String msgToSend = "->" + message;
 		String temp = "";
 		try {
-			block_sem.acquire();	//Acquires before senging.
+			block_sem.acquire();	//Acquires before sending.
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

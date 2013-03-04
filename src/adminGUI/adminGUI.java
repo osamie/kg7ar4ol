@@ -97,19 +97,19 @@ public class adminGUI extends ApplicationWindow {
 		lblQuestion.setBounds(469, 51, 55, 15);
 		lblQuestion.setText("Question");
 		
-		final Combo combo_answers = new Combo(container, SWT.NONE);
-		combo_answers.setToolTipText("Select the number of options the voters can choose. Must be an integer and within the max limit.");
+		final Combo combo_options = new Combo(container, SWT.NONE);
+		combo_options.setToolTipText("Select the number of options the voters can choose. Must be an integer and within the max limit.");
 		String items[] = new String[maxOptions];
 		for(int i = 0; i < maxOptions; i++)
 		{
 			items[i] = String.valueOf(i+1);
 		}
-		combo_answers.setItems(items);
-		combo_answers.setBounds(282, 74, 55, 23);
+		combo_options.setItems(items);
+		combo_options.setBounds(282, 74, 55, 23);
 		
-		final Label lblNumberOfAnswers = new Label(container, SWT.NONE);
-		lblNumberOfAnswers.setBounds(343, 82, 120, 15);
-		lblNumberOfAnswers.setText("Number of Answers");
+		final Label lblNumberOfOptions = new Label(container, SWT.NONE);
+		lblNumberOfOptions.setBounds(343, 82, 120, 15);
+		lblNumberOfOptions.setText("Number of Options");
 		
 		Label lblCreatedPolls = new Label(container, SWT.NONE);
 		lblCreatedPolls.setBounds(10, 10, 94, 15);
@@ -128,15 +128,15 @@ public class adminGUI extends ApplicationWindow {
 			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String numOfOptions = combo_answers.getText();
+				String numOfOptions = combo_options.getText();
 				String email = text_email.getText();
-				String answerString = "";
+				String optionsString = "";
 				Boolean valid = true;	//Ensures the information in valid.
 				long pollID;			//Poll ID which is returned from the server.
 
 				lblQuestion.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
 				lblEmailAddress.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
-				lblNumberOfAnswers.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+				lblNumberOfOptions.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
 				
 				try	//Ensures the number of options is an integer.
 				{
@@ -144,7 +144,7 @@ public class adminGUI extends ApplicationWindow {
 				}
 				catch(NumberFormatException e1)
 				{
-					lblNumberOfAnswers.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
+					lblNumberOfOptions.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
 					valid = false;
 				}
 				if(valid == true)	//Ensures the number of Options is within the limit of options and is not 0.
@@ -152,7 +152,7 @@ public class adminGUI extends ApplicationWindow {
 					if(numOfOptions== "" || Integer.parseInt(numOfOptions) > maxOptions || Integer.parseInt(numOfOptions)<1)
 					{
 						
-						lblNumberOfAnswers.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
+						lblNumberOfOptions.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
 						valid = false;
 					}
 				}
@@ -167,21 +167,21 @@ public class adminGUI extends ApplicationWindow {
 					valid = false;
 				}
 				/*
-				 * Creates an answersGUI that will get the options the voters can vote for.
+				 * Creates an optionsGUI that will get the options the voters can vote for.
 				 */
 				if(valid == true)	
 				{
 					try{
-						optionsGUI answers = new optionsGUI(numOfOptions);
+						optionsGUI options = new optionsGUI(numOfOptions);
 						parent.setVisible(false);
-						answers.setBlockOnOpen(true);
-						answers.open();
-						while(answers.done == 0)	//Need some sort of blocking, wait/notify
+						options.setBlockOnOpen(true);
+						options.open();
+						while(options.done == 0)	//Need some sort of blocking, wait/notify
 						{	}
 						
-						answerString = answers.optionsValue;
+						optionsString = options.optionsValue;
 						parent.setVisible(true);
-						System.out.println(answerString);
+						System.out.println(optionsString);
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
@@ -196,17 +196,17 @@ public class adminGUI extends ApplicationWindow {
 					String message = "";	
 					//Constructs the string to be sent to the server. 
 					//Format: email|questions|number of options|Options1|Options2|Option3|etc...
-					message = email + "|" + text_question.getText() +"|"+ numOfOptions + "|" + answerString;
+					message = email + "|" + text_question.getText() +"|"+ numOfOptions + "|" + optionsString;
 						
 					pollID = admin.createPoll(message);//blocking, Returns the poll ID.
 					
 					
 					lblQuestion.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
 					lblEmailAddress.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
-					lblNumberOfAnswers.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+					lblNumberOfOptions.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
 					
 					list_Polls.add(String.valueOf(pollID) + " - " + numOfOptions);
-					list_Active.add(String.valueOf(pollID)+ " - " + numOfOptions);
+					list_Paused.add(String.valueOf(pollID)+ " - " + numOfOptions);
 				}
 			}
 			
@@ -346,7 +346,7 @@ public class adminGUI extends ApplicationWindow {
 				{
 					int index = list_Polls.getSelectionIndex();
 					String temp = list_Polls.getItem(index);
-					String pollId = temp.substring(temp.lastIndexOf(" ") + 1);	//get poll id from list.
+					String pollId = temp.substring(0,temp.indexOf(" ") - 1);	//get poll id from list.
 					
 					admin.stopPoll(pollId);	//Send request to the server.
 					list_Polls.remove(index); //remove item from list of polls list.

@@ -51,7 +51,7 @@ public class pollGUI extends ApplicationWindow {
 		container.setLayout(null);
 		ProgressBar votingBar[] = new ProgressBar[(int) numOptions];
 		Label lblVotes[] = new Label[(int) numOptions];
-		Label lblAnswers[] = new Label[(int) numOptions];
+		Label lblOptions[] = new Label[(int) numOptions];
 		//Creates the content based on the number of options.
 		//The window is sized accordingly and the positioning.
 		for(int i = 0; i < numOptions; i++)
@@ -64,9 +64,9 @@ public class pollGUI extends ApplicationWindow {
 			votingBar[i].setSelection(0);
 			votingBar[i].setBounds(150, 50 + i*35, 300, 25);
 			
-			lblAnswers[i] = new Label(container, SWT.NONE);
-			lblAnswers[i].setBounds(10, 60 + i*35, 100, 15);
-			lblAnswers[i].setText("Answer " + (i+1));
+			lblOptions[i] = new Label(container, SWT.NONE);
+			lblOptions[i].setBounds(10, 60 + i*35, 100, 15);
+			lblOptions[i].setText("Option " + (i+1));
 						
 		}
 

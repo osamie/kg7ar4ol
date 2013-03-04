@@ -1,5 +1,5 @@
 /*
- * AnswersGUI
+ * OptionsGUI
  * GUI that prompts the user for the options that the voters can vote for.
  */
 
@@ -31,14 +31,14 @@ public class optionsGUI extends ApplicationWindow {
 	/**
 	 * Create the application window.
 	 */
-	public optionsGUI(String numOfAnswers) {
+	public optionsGUI(String numOfOptions) {
 		super(null);
 		setShellStyle(SWT.TITLE);
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
 		addMenuBar();
 		addStatusLine();
-		numOptions = Integer.parseInt(numOfAnswers);
+		numOptions = Integer.parseInt(numOfOptions);
 	}
 	public String getVals()
 	{
@@ -141,8 +141,8 @@ public class optionsGUI extends ApplicationWindow {
 		
 		
 		Label lblNewLabel_1 = new Label(container, SWT.NONE);
-		lblNewLabel_1.setBounds(77, 10, 89, 13);
-		lblNewLabel_1.setText("Input Option");
+		lblNewLabel_1.setBounds(77, 10, 89, 16);
+		lblNewLabel_1.setText("Input Options");
 
 		return container;
 	}
@@ -162,7 +162,7 @@ public class optionsGUI extends ApplicationWindow {
 	 */
 	public static void main(String args[]) {
 		try {
-			optionsGUI window = new optionsGUI("12");
+			optionsGUI window = new optionsGUI("5");
 			window.setBlockOnOpen(true);
 			window.open();
 			Display.getCurrent().dispose();
@@ -178,7 +178,7 @@ public class optionsGUI extends ApplicationWindow {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText("Input Answers");
+		newShell.setText("Input Options");
 	}
 
 	/**

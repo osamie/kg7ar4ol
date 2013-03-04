@@ -131,23 +131,23 @@ class AdminWorker extends Thread{
 		}
 		else if(request.contains("(+)"))
 		{
-			
+			//startPoll
 		}
 		else if(request.contains("(!)"))
 		{
-			
+			//pausePoll
 		}
 		else if(request.contains("(X)"))
 		{
-			
+			//stopPoll
 		}
 		else if(request.contains("(-)"))
 		{
-			
+			//clearPoll
 		}
 		else if(request.contains("(0)"))
 		{
-			
+			//resumePoll
 		}
 		
 		/*

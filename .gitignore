@@ -5,7 +5,7 @@
 *.ear
 
 #swt library would vary depending on JVM and OS type
-*swt.jar  
+*gui-resources/swt.jar  
 
 
 *.DS_Store

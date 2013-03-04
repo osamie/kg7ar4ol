@@ -54,7 +54,8 @@ public class voterGUI extends ApplicationWindow {
 			public void widgetSelected(SelectionEvent e) {
 				Boolean valid = true;
 				String pollIdInput, choiceInput;
-				Long pollId = null, choice =null;
+				Long pollId = null; 
+				int choice=0;
 				pollIdInput = text_PollID.getText();
 				choiceInput = text_Choice.getText();
 				
@@ -66,7 +67,7 @@ public class voterGUI extends ApplicationWindow {
 			       lblError.setText("Invalid Poll ID");
 			    }
 				try { 
-					choice = Long.parseLong(choiceInput);
+					choice = Integer.parseInt(choiceInput);
 				} catch(NumberFormatException e1) { 
 			       valid = false;
 			       text_Choice.setText("");

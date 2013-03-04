@@ -29,14 +29,14 @@ public class Client {
 	     }
 	 }
 	
-	 public void vote(Long pollId, Long choice)
+	 public void vote(Long pollID, int choice)
 	 {
 		 try {
 	          // Java stores characters as 16-bit Unicode values, but 
 	          // DatagramPackets store their messages as byte arrays.
-	         byte msg[] = new byte[2]; 
-	         msg[0] = pollId.byteValue();
-	         msg[1] = choice.byteValue();
+	         String message = pollID + " " + choice;
+	         
+	         byte msg[] = message.getBytes();
 	    	 sendPacket = new DatagramPacket(msg, msg.length,InetAddress.getLocalHost(), portNum);
 	         sendReceiveSocket.send(sendPacket);         
 	     }

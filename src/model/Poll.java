@@ -13,11 +13,9 @@ public class Poll extends Observable {
 
 	
 	//States of the poll
-	private static final int STOPPED = 9;
-	private static final int RUNNING = 1;
-	private static final int PAUSED = 0;
-	
-	
+	public static final int STOPPED = 9;
+	public static final int RUNNING = 1;
+	public static final int PAUSED = 0;
 	
 	public Poll(long pollID,int adminID,String emailAdress,String [] list) {
 		//initialize class properties
@@ -59,14 +57,21 @@ public class Poll extends Observable {
 	
 	
 	/**
-	 * Stopped state: poll has ended and has stopped accepting votes. 
+	 * pause state: poll is paused (i.e not accepting votes) 
 	 */
-	public void stopPoll(){
-		currentState = STOPPED;
+	public void pausePoll(){
+		currentState = PAUSED;
 	}
 	
-	public void startPoll(){
+	public void resumePoll(){
 		currentState = RUNNING;
+	}
+	
+	public void clearPoll(){
+		//reset votes count values to 0
+		for(int i=0; i<votesCount.length;i++){
+			votesCount[i] = 0;
+		}
 	}
 	
 	/**
@@ -75,7 +80,7 @@ public class Poll extends Observable {
 	 * @param voterID
 	 * @return true if the poll was sucessfully added to the poll
 	 */
-	public boolean addVote(int optionIndex,int voterID){
+	public synchronized boolean addVote(int optionIndex,int voterID){
 		//TODO Using voterID, check if voter has already voted or is anonymous
 		if((currentState==RUNNING)&&(optionIndex < options.length)){
 			votesCount[optionIndex] = votesCount[optionIndex]+1;  
@@ -83,6 +88,12 @@ public class Poll extends Observable {
 		}
 		return false;
 	}
+	
+	public int[] getVoteCount(){
+		return votesCount;
+	}
+	
+	
 	
 
 }

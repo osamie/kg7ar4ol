@@ -73,7 +73,7 @@ public class PollingTest {
 		//Test sending a vote to the polls.
 		for(int i = 0; i< numberOfPolls; i++)
 		{
-			testClient.vote(pollIds[i],(long)3);
+			testClient.vote(pollIds[i],3);
 		}
 		
 		return testResult;
@@ -147,7 +147,7 @@ public class PollingTest {
 		
 		for(int i = 0; i <numberOfVotes; i++)
 		{		
-			testClient.vote((long)12345,(long)2);
+			testClient.vote((long)12345,2);
 			
 		}
 		return testResult;

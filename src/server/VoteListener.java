@@ -38,7 +38,7 @@ class VoteListener extends Thread {
 			receivePacket = new DatagramPacket(data, data.length);
 			try {
 				receiveSocket.receive(receivePacket);
-				new VotesHandler(receivePacket).start(); //handle the vote
+				new VotesHandler(receivePacket,pollsManager).start(); //handle the vote
 			} catch (IOException e) {
 				System.out.println("IOexception receiving packet" + e.getMessage());
 				continue;
@@ -66,43 +66,36 @@ class VoteListener extends Thread {
  * Worker thread: handles the voter's input
  */
 class VotesHandler extends Thread{
-	
+	private PollsManager pollsManager;
 	DatagramPacket receivedPacket;
-	public VotesHandler(DatagramPacket packet){
+	public VotesHandler(DatagramPacket packet,PollsManager manager){
 		receivedPacket = packet;
-		
+		pollsManager = manager;
 	}
 	
 	/**
 	 * Parse and then update the necessary poll  
 	 */
-	private void processRequest(byte[] req){//String req){
-		Long id = Long.valueOf(req[0]);
-		Long choice = Long.valueOf(req[1]);
-		System.out.println(id + " " + choice);
+	private void processRequest(String req){//String req){
+		//TODO parse req properly 
+		String []request = req.split(" ");
+		System.out.println("here but" + request[0] + "and" + request[1]);
+		if(request.length<2) return;
 		
+		Long pollID = Long.parseLong(request[0]);
+		int choice = Integer.parseInt(request[1]);
+		System.out.println("Voting option:" + pollID + " for pollID:" + choice);
+//		pollsManager.addVote(pollID, choice, 0);
 		
-		//request = req.replaceFirst("!->", ""); //remove the vote request identifier if any
-		//String [] args = request.split(",");
-		//if (args.length<2){
-		//	System.out.println("Invalid vote request received:" + request);
-		//	return;
-		//}
-		/*
-		 * TODO update the corresponding poll. The corresponding poll
-		 *    checks for duplicate or repeated voter
-		 */
-		//System.out.println("voted option:" + args[1] + " for pollID:" + args[0]);
 	}
 	
 	@Override
 	public void run() {
-		byte[] request;
+//		byte[] request;
 		//TODO update the poll specified in the packet
 		//String request = new String (receivedPacket.getData());
-		
-		request = receivedPacket.getData();
-		processRequest(request); //TODO
+
+		processRequest(new String(receivedPacket.getData())); //TODO
 	}
 	
 }

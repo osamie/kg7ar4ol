@@ -124,6 +124,7 @@ class AdminWorker extends Thread{
 	private void processRequest(String request){
 		//TODO parse string
 		System.out.println("received request: " + request);
+		
 //		String option = request.substring(0,3);
 		
 		if(request.contains("->"))
@@ -132,7 +133,7 @@ class AdminWorker extends Thread{
 			String[]optionsList = {"option1","option2"};
 			
 			Long pollID = pollsManager.createNewPoll(0, "default@email", optionsList);
-			System.out.println("new pollID:"+pollID);
+			System.out.println("new pollID:" + pollID);
 			outToClient.println("$ " + String.valueOf(pollID));
 		}
 		else if(request.contains("(+)"))
@@ -143,6 +144,7 @@ class AdminWorker extends Thread{
 		else if(request.contains("(!)"))
 		{
 			//pausePoll
+			//pollsManager.pausePoll(pollID)
 		}
 		else if(request.contains("(X)"))
 		{

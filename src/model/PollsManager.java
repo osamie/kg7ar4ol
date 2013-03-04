@@ -13,7 +13,8 @@ public class PollsManager {
 	
 	
 	/**
-	 * Create a new Poll and add to the 
+	 * Create a new Poll and add it to the collection of polls
+	 * @return pollID
 	 */
 	public long createNewPoll(int adminID,String emailAdress,String [] list){
 		long pollID = generatePollID();//generate a new pollID
@@ -32,7 +33,6 @@ public class PollsManager {
 	}
 	
 	/**
-	 * Sends a 'startPoll' request to server (i.e now allow votes for this poll)
 	 * @param pollID
 	 */
 	public void startPoll(long pollID) 
@@ -50,37 +50,50 @@ public class PollsManager {
 	 */
 	public void pausePoll(long pollID)
 	{
-		String msgToSend = "(!)";
-		
-		
-		msgToSend = msgToSend + pollID;
-		
+		if(polls.containsKey(pollID)){
+			polls.get(pollID).pausePoll();
+		}
 	}
 	
 	/**
-	 * Sends a 'stopPoll' request to server (i.e permanently deactivate the poll.
-	 * Results should be collected).
 	 * 
 	 * @param pollID
 	 */
 	public void stopPoll(long pollID)
 	{
-		String msgToSend = "(X)";
-		
-		msgToSend = msgToSend + pollID;
-	
+//		System.out.println("poll exists before:" + polls.containsKey(pollID));
+		polls.remove(pollID);
+//		System.out.println("poll exists AFTER:" + polls.containsKey(pollID));	
 	}
 	
 	/**
-	 * Sends a 'clearPoll' request to the server (i.e discard all votes for this poll...poll remains active)
+	 * 
 	 * @param pollID
 	 */
 	public void clearPoll(long pollID)
 	{
-		String msgToSend = "(-)";
-			
-		msgToSend = msgToSend + pollID;
+		if(polls.containsKey(pollID)){
+			polls.get(pollID).clearPoll();
+		}
+	}
 	
+	public void addVote(long pollID,int optionIndex,int voterID){
+		boolean voteAdded=false;
+		if(polls.containsKey(pollID)){
+			voteAdded = polls.get(pollID).addVote(optionIndex,voterID);
+		}
+		if(voteAdded){
+			//TODO notify observers
+		}
+	}
+	
+	public int[] getVoteCount(long pollID){
+		int[] votes = null;
+		if(polls.containsKey(pollID)){
+			votes = polls.get(pollID).getVoteCount();
+			System.out.println("votes count:" + votes.length);
+		}
+		return votes;
 	}
 	
 	/**
@@ -88,10 +101,9 @@ public class PollsManager {
 	 * @param pollID
 	 */
 	public void resumePoll(long pollID)
-	{
-		String msgToSend = "(0)";
-			
-		msgToSend = msgToSend + pollID;
-		
+	{	
+		if(polls.containsKey(pollID)){
+			polls.get(pollID).resumePoll();
+		}
 	}
 }

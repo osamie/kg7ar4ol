@@ -10,7 +10,7 @@ import java.net.SocketException;
  * voting messages. (One thread per poll listening to votes).
  *
  */
-class VoteListener {
+class VoteListener extends Thread {
 	private DatagramSocket receiveSocket = null;
 	private DatagramPacket receivePacket; 
 	
@@ -41,6 +41,11 @@ class VoteListener {
 			}
 		}
 		
+	}
+	
+	@Override
+	public void run() {
+		listen();
 	}
 	
 	/**

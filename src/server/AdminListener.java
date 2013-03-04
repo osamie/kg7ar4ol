@@ -13,7 +13,7 @@ import java.util.Random;
 /**
  * AdminListener is a TCP server where each worker accepts the admin messages
  */
-class AdminListener {
+class AdminListener extends Thread{
 	private ServerSocket serverSocket;
     Socket clientSocket;
 	
@@ -26,7 +26,6 @@ class AdminListener {
            System.exit(1);
 		}
 	}
-	
 	
 	/**
 	 *Listen for new client connection requests and spawns a new AdminWorker thread
@@ -47,6 +46,11 @@ class AdminListener {
 	public void finalize()
 	{
 		   try { serverSocket.close(); } catch (IOException e) {}
+	}
+
+	@Override
+	public void run() {
+		listen();
 	}
 }
 

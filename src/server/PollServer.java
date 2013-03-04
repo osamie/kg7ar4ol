@@ -13,13 +13,20 @@ public class PollServer {
 	}
 	
 	public void startListeners(){
-		Thread admin = new ListenerThread();
-		Thread t = new VoteListenerThread();
-		admin.start();
-		t.start();
+		
+		/*Initialize a Listener for ADMIN client connections */
+		AdminListener adminListener = new AdminListener(ADMIN_PORT);
+		
+		/*Initialize a listener for other clients - voters */
+		VoteListener voteListener = new VoteListener(PollServer.VOTING_PORT); 
+		
+		/*start listening for new admins and clients*/
+		adminListener.start();
+		voteListener.start();
 		
 		try {
-			admin.join();
+			adminListener.join();
+			voteListener.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -29,21 +36,5 @@ public class PollServer {
 	public static void main(String[] args) {
 		
 		new PollServer().startListeners();
-	}
-}
-
-/*Initialize a Listener for ADMIN client connections */
-class ListenerThread extends Thread{
-	@Override
-	public void run() {
-		new AdminListener(PollServer.ADMIN_PORT).listen();
-	}
-}
-
-/*Initialize a listener for other clients - voters */
-class VoteListenerThread extends Thread{
-	@Override
-	public void run() {
-		new VoteListener(PollServer.VOTING_PORT).listen();
 	}
 }

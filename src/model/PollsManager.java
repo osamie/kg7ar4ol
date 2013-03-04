@@ -53,7 +53,7 @@ public class PollsManager {
 		do{
 			//generate pollIDs until a unique ID is generated 
 			pollID = random.nextLong();
-		}while(polls.contains(pollID)); //rejection criterion
+		}while(polls.contains(pollID) && (pollID<1)); //rejection criterion
 		return pollID;
 	}
 	

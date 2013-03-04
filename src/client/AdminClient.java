@@ -17,8 +17,7 @@ public class AdminClient {
 	Semaphore poll_sem, block_sem;
 	static Long newPollId;
 	
-	Socket adminSocket;
-	private BufferedReader in;
+	Socket adminSocket;private BufferedReader in;
 	private PrintWriter outToServer;
 	BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 	private int numOfPolls;
@@ -31,8 +30,7 @@ public class AdminClient {
 	 * @param portNum
 	 */
 	public AdminClient(int portNum)
-	{	
-		
+	{			
 		numOfPolls = 0;
 		try {
 			// Bind a socket to any available port on the local host machine. 
@@ -56,11 +54,7 @@ public class AdminClient {
 		block_sem = new Semaphore(1);
 		messageReciever = new MessageListener(this);
 		messageReciever.start();
-		
-	
 	}
-	
-	
 	
 	/**
 	 * Sends a 'create new poll' request to the server 
@@ -86,7 +80,6 @@ public class AdminClient {
 		
 		//update GUI with "waiting for pollID" status 
 		
-		
 		//Blocking wait for messageListener to receive and update this.newPollID 
 		try {
 			poll_sem.acquire();	//waits until the receiver has changed the poll id and releases its semaphore.
@@ -95,30 +88,9 @@ public class AdminClient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally{
-			poll_sem.release();	//Releases the second semaphore.
-			
+			poll_sem.release();	//Releases the second semaphore.	
 		}
-
 		return newPollId; //get newPollID
-		
-		/*try {
-			temp = in.readLine();
-			temp = temp.substring(temp.indexOf("$") + 2);
-		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		
-	}
-	
-	/**
-	 * Server has 
-	 */
-	public void pollCreated() {
-		//
 	}
 	
 	/**
@@ -128,10 +100,8 @@ public class AdminClient {
 	public void startPoll(String pollID) 
 	{
 		String msgToSend = "(+)";
-		
 		msgToSend = msgToSend + pollID;
-		outToServer.println(msgToSend);
-		
+		outToServer.println(msgToSend);	
 	}
 	
 	/**
@@ -143,8 +113,6 @@ public class AdminClient {
 	public void pausePoll(String pollID)
 	{
 		String msgToSend = "(!)";
-		
-		
 		msgToSend = msgToSend + pollID;
 		outToServer.println(msgToSend);
 	}
@@ -157,8 +125,7 @@ public class AdminClient {
 	 */
 	public void stopPoll(String pollID)
 	{
-		String msgToSend = "(X)";
-		
+		String msgToSend = "(X)";		
 		msgToSend = msgToSend + pollID;
 		outToServer.println(msgToSend);
 	}
@@ -169,8 +136,7 @@ public class AdminClient {
 	 */
 	public void clearPoll(String pollID)
 	{
-		String msgToSend = "(-)";
-			
+		String msgToSend = "(-)";			
 		msgToSend = msgToSend + pollID;
 		outToServer.println(msgToSend);
 	}
@@ -336,8 +302,7 @@ class MessageListener extends Thread
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
+		}	
 	}
 	
 	public void run()
@@ -365,22 +330,14 @@ class MessageListener extends Thread
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
-				
+				}			
 			}
-			else
-			{
-				
-			}
+			else{ }
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
 		
-		}
-		
-			
-			
+		}		
 	}
-	
 }

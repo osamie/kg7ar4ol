@@ -346,7 +346,7 @@ public class adminGUI extends ApplicationWindow {
 				{
 					int index = list_Polls.getSelectionIndex();
 					String temp = list_Polls.getItem(index);
-					String pollId = temp.substring(temp.lastIndexOf(" ") + 1);	//get poll id from list.
+					String pollId = temp.substring(0,temp.indexOf(" ") - 1);	//get poll id from list.
 					
 					admin.stopPoll(pollId);	//Send request to the server.
 					list_Polls.remove(index); //remove item from list of polls list.

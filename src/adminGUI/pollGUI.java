@@ -26,18 +26,22 @@ public class pollGUI extends ApplicationWindow {
 
 	private long numOptions;
 	private long pollID;
+	private String question;
+	private String[] options;
 	/**
 	 * Create the application window.
 	 */
-	public pollGUI(long options, long pollId) {
+	public pollGUI(long numOfOptions, long pollId,String question, String options) {
 		super(null);
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
 		addMenuBar();
 		addStatusLine();
-		
-		numOptions = options;
+		this.question = question;
+		numOptions = numOfOptions;
 		pollID = pollId;
+		System.out.println(options);
+		this.options  = options.split("\\|");
 		
 	}
 
@@ -66,7 +70,7 @@ public class pollGUI extends ApplicationWindow {
 			
 			lblOptions[i] = new Label(container, SWT.NONE);
 			lblOptions[i].setBounds(10, 60 + i*35, 100, 15);
-			lblOptions[i].setText("Option " + (i+1));
+			lblOptions[i].setText(options[i]);
 						
 		}
 
@@ -74,7 +78,7 @@ public class pollGUI extends ApplicationWindow {
 		Label lblNewLabel = new Label(container, SWT.NONE);
 		lblNewLabel.setAlignment(SWT.CENTER);
 		lblNewLabel.setBounds(10, 10, 514, 15);
-		lblNewLabel.setText("Poll ID: " + String.valueOf(pollID));
+		lblNewLabel.setText(question);
 	
 		
 	
@@ -105,7 +109,7 @@ public class pollGUI extends ApplicationWindow {
 	 */
 	public static void main(String args[]) {
 		try {
-			pollGUI window = new pollGUI(10,213);
+			pollGUI window = new pollGUI(10,213,"TEST","TEST@");
 			window.setBlockOnOpen(true);
 			window.open();
 			Display.getCurrent().dispose();

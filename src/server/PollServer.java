@@ -35,7 +35,19 @@ public class PollServer {
 		}
 		
 	}
-	
+	public void testingStartListeners(){
+		//Listener for ADMIN client connections
+		AdminListener adminListener = new AdminListener(ADMIN_PORT,pollsManager);
+		
+		//Listener for other clients - voters
+		VoteListener voteListener = new VoteListener(PollServer.VOTING_PORT,pollsManager); 
+		
+		/*start listening for new admins and clients*/
+		adminListener.start();
+		voteListener.start();
+		
+		
+	}
 	public static void main(String[] args) {
 		
 		new PollServer().startListeners();

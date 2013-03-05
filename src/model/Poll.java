@@ -1,5 +1,6 @@
 package model;
 
+import java.util.Observable;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 

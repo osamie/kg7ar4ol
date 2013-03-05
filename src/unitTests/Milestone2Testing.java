@@ -1,6 +1,10 @@
 package unitTests;
 
-
+/*
+ * INFO
+ * 	Message Format:	email|question|number of options|option1|option2|etc...
+ * 			Returns:	long pollID
+ */
 
 import static org.junit.Assert.assertTrue;
 
@@ -8,6 +12,7 @@ import model.Poll;
 import model.PollsManager;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,33 +25,30 @@ public class Milestone2Testing {
 
 	private int polls[] = new int[10];
 	int numOfPolls;
-	static PollServer server;
+	static PollServer server = new PollServer();;
 	
-	@BeforeClass 
-	public static void method()
-	{
-		server = new PollServer();
-		server.startListeners();
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+	 
+		server.testingStartListeners();
 	}
-	@Before
-	public void setUp() throws Exception {
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+	
 		
 	}
 
-	@After
-	public void tearDown() throws Exception {
+	@Test
+	public final void testSessionControl() {
+		assertTrue(sessionControlTest());
 	}
-
 	@Test
 	public final void testInvalidVotes()
 	{
 		assertTrue(invalidVotesTest());
 	}
 	
-	@Test
-	public final void testSessionControl() {
-		assertTrue(sessionControlTest());
-	}
+	
 	@Test
 	public final void testRepeatedVotes()
 	{
@@ -69,22 +71,25 @@ public class Milestone2Testing {
 	private boolean sessionControlTest()
 	{
 		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT);
-		long pollID = admin.createPoll("TEST@TEST.com|2|Poll ID|Yes|No");
+		long pollID = admin.createPoll("TEST@TEST.com|Session Control|2|Yes|No");
 		PollsManager manager = PollsManager.getInstance();
-		/*
-		 * If(server.poll.getstate(pollId) != RUNNING)
-		 * {
-		 * return  false;
-		 * }
-		 */
 		
+		  if(manager.getPollState(pollID) != Poll.RUNNING)
+		  {
+			  System.out.println("Poll did not create properly.");
+			  return  false;
+		  }
+		 
+		System.out.println("TEST - Pausing poll: " + pollID);
+		System.out.println("TEST INFO - State of poll before: " + manager.getPollState(pollID));
 		admin.pausePoll(String.valueOf(pollID));
-		
+		System.out.println("TEST INFO - State of poll after: " + manager.getPollState(pollID));
 		
 		
 		  if(manager.getPollState(pollID) != Poll.PAUSED) 
 		  {
-		  return false;
+			  System.out.println("Poll did not pause.");
+			  return false;
 		  }
 		 
 		
@@ -114,7 +119,7 @@ public class Milestone2Testing {
 		
 		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT);
 		Client testClient = new Client(PollServer.VOTING_PORT);
-		long pollId = admin.createPoll("TEST@TEST.com|2|Poll ID|Yes|No");
+		long pollId = admin.createPoll("TEST@TEST.com|Invalid Votes|2|Yes|No");
 		
 		testClient.vote(pollId + 1,1);
 		
@@ -140,7 +145,7 @@ public class Milestone2Testing {
 		
 		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT);
 		Client testClient = new Client(PollServer.VOTING_PORT);
-		long pollId = admin.createPoll("TEST@TEST.com|2|Poll ID|Yes|No");
+		long pollId = admin.createPoll("TEST@TEST.com|Poll ID|2|Yes|No");
 		
 		admin.pausePoll(String.valueOf(pollId));
 		

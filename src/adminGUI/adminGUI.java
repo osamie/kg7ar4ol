@@ -36,9 +36,11 @@ import org.eclipse.wb.swt.SWTResourceManager;
 
 
 public class adminGUI extends ApplicationWindow {
+	
+	private String[][] pollInfo;
+	private int pollInfoLength;
 	private Text text_email;
 	private Text text_question;
-	
 	private static AdminClient admin;
 	private int maxOptions = 10;
 	/**
@@ -50,6 +52,9 @@ public class adminGUI extends ApplicationWindow {
 		addToolBar(SWT.FLAT | SWT.WRAP);
 		addMenuBar();
 		addStatusLine();
+		pollInfoLength = 25;
+		pollInfo = new String[pollInfoLength][3];
+		
 	}
 
 	
@@ -58,8 +63,47 @@ public class adminGUI extends ApplicationWindow {
 		
 		return true;
 	}
-	private void updateInfo()
+	private String getQuestion(String pollID)
 	{
+		for(int i = 0; i <pollInfoLength; i++ )
+		{
+			if(pollInfo[i][0] != null)
+			{
+				if(pollInfo[i][0].equals(pollID) == true)
+				{
+					return pollInfo[i][1];
+				}
+			}
+		}
+		return null;
+	}
+	private String getOptions(String pollID)
+	{
+		for(int i = 0; i <pollInfoLength; i++ )
+		{
+			if(pollInfo[i][0]!= null)
+			{
+				if(pollInfo[i][0].equals(pollID) == true)
+				{
+					return pollInfo[i][2];
+				}
+			}
+		}
+		return null;
+	}
+	private void addPollInfo(String pollID, String question, String options)
+	{
+		for(int i = 0; i <pollInfoLength; i++)
+		{
+			if(pollInfo[i][0] == null)
+			{
+				pollInfo[i][0] = pollID;
+				pollInfo[i][1] = question;
+				pollInfo[i][2] = options;
+				i = pollInfo.length;
+			}
+		}
+		
 		
 	}
 	/**
@@ -200,7 +244,7 @@ public class adminGUI extends ApplicationWindow {
 						
 					pollID = admin.createPoll(message);//blocking, Returns the poll ID.
 					
-					
+					addPollInfo(String.valueOf(pollID),text_question.getText(),optionsString);
 					lblQuestion.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
 					lblEmailAddress.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
 					lblNumberOfOptions.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
@@ -229,7 +273,7 @@ public class adminGUI extends ApplicationWindow {
 				{
 					int focusedIndex = list_Active.getFocusIndex();	//Gets the pollID from the list.
 					String temp = list_Active.getItem(focusedIndex);
-					temp = temp.substring(0, temp.indexOf(" ")-1);
+					temp = temp.substring(0, temp.indexOf(" "));
 					//System.out.println(temp); //Debug Print.
 					admin.pausePoll(temp);	//Sends request to the server.
 					//Adds the poll to the paused list and removes it from the active list.
@@ -403,9 +447,10 @@ public class adminGUI extends ApplicationWindow {
 				{
 					int index = list_Polls.getSelectionIndex();
 					String temp = list_Polls.getItem(index);	//Gets poll ID
-					String pollId = temp.substring(temp.lastIndexOf(" ") + 1);
+					String pollID = temp.substring(0,temp.indexOf(" "));
 					
-					pollGUI poll = new pollGUI(Long.valueOf(temp.substring(temp.lastIndexOf(" ") + 1)),Long.valueOf(pollId)); //Creates the Poll GUI
+					
+					pollGUI poll = new pollGUI(Long.parseLong(temp.substring(temp.lastIndexOf(" ") + 1)),Long.parseLong(pollID),getQuestion(pollID),getOptions(pollID)); //Creates the Poll GUI
 					poll.setBlockOnOpen(true);
 					poll.open();
 					

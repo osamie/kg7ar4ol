@@ -86,6 +86,7 @@ public class Poll extends Observable {
 	 * @return true if the poll was successfully added to the poll
 	 */
 	public synchronized boolean addVote(int optionIndex,int voterID){
+		if(optionIndex>votesCount.length-1) return false;
 		//TODO Using voterID, check if voter has already voted or is anonymous
 		if((currentState==RUNNING)&&(optionIndex < options.length)){
 			votesCount[optionIndex] = votesCount[optionIndex]+1;  

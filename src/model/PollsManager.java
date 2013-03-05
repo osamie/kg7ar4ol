@@ -115,11 +115,12 @@ public class PollsManager {
 		return state;
 	}
 	
-	public void addVote(long pollID,int optionIndex,int voterID){
+	public void addVote(long pollID,int choice,int voterID){
 		boolean voteAdded=false;
+		
+		int optionIndex = choice-1; //corresponds to an array index in Poll
 		if(polls.containsKey(pollID)){
 			voteAdded = polls.get(pollID).addVote(optionIndex,voterID);
-			voteAdded = true;
 		}
 		if(voteAdded){
 			//TODO notify observers

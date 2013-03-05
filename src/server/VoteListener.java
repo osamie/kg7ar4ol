@@ -85,24 +85,8 @@ class VotesHandler extends Thread{
 		Long pollID = Long.parseLong(request[0]);
 		int choice = Integer.parseInt(request[1].trim());
 		System.out.println("Voting option:" + pollID + " for pollID:" + choice);
-		
-		
-		
-		int[] voteStats = pollsManager.getVotes(pollID);
-		
-		if(voteStats==null){
-			System.out.println("Poll exists:" + pollsManager.hasPoll(pollID));
-			System.err.println("Could not get vote stats!");
-		}
-		else{
-			System.out.println("choice count before:"+ voteStats[choice]);
-			pollsManager.addVote(pollID, choice, 0);
-			voteStats = pollsManager.getVotes(pollID);
-			System.out.println("choice count after:"+ voteStats[choice]);
-		}
-		
-//		System.out.println("choice count before:"+ countVotes(voteStats));
-		
+		pollsManager.addVote(pollID, choice, 0);
+//		System.out.println("choice count before:"+ countVotes(voteStats));		
 	}
 	
 	

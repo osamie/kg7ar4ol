@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Slider;
 import server.PollServer;
 import client.AdminClient;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.widgets.Group;
 
 
 public class AdminGUI extends ApplicationWindow {
@@ -118,52 +119,268 @@ public class AdminGUI extends ApplicationWindow {
 		
 		final List list_Polls = new List(container, SWT.BORDER | SWT.V_SCROLL);
 		list_Polls.setItems(new String[] {});
-		list_Polls.setBounds(10, 31, 181, 133);
+		list_Polls.setBounds(424, 37, 194, 153);
 		
 		final List list_Paused = new List(container, SWT.BORDER | SWT.V_SCROLL);
-		list_Paused.setBounds(282, 238, 161, 138);
+		list_Paused.setBounds(49, 245, 209, 153);
 		
 		final List list_Active = new List(container, SWT.BORDER | SWT.V_SCROLL);
-		list_Active.setBounds(14, 238, 177, 138);
-		
-		text_email = new Text(container, SWT.BORDER);
-		text_email.setText("sample@domain.com");
-		text_email.setBounds(282, 14, 181, 21);
-		
-		final Label lblEmailAddress = new Label(container, SWT.NONE);
-		lblEmailAddress.setBounds(469, 15, 94, 15);
-		lblEmailAddress.setText("Email Address");
-		
-		text_question = new Text(container, SWT.BORDER);
-		text_question.setBounds(282, 45, 181, 21);
-		
-		
-		
-		final Label lblQuestion = new Label(container, SWT.NONE);
-		lblQuestion.setBounds(469, 51, 55, 15);
-		lblQuestion.setText("Question");
-		
-		final Combo combo_options = new Combo(container, SWT.NONE);
-		combo_options.setToolTipText("Select the number of options the voters can choose. Must be an integer and within the max limit.");
+		list_Active.setBounds(409, 245, 209, 153);
 		String items[] = new String[maxOptions];
 		for(int i = 0; i < maxOptions; i++)
 		{
 			items[i] = String.valueOf(i+1);
 		}
-		combo_options.setItems(items);
-		combo_options.setBounds(282, 74, 55, 23);
-		
-		final Label lblNumberOfOptions = new Label(container, SWT.NONE);
-		lblNumberOfOptions.setBounds(343, 82, 120, 15);
-		lblNumberOfOptions.setText("Number of Options");
 		
 		Label lblCreatedPolls = new Label(container, SWT.NONE);
-		lblCreatedPolls.setBounds(10, 10, 94, 15);
+		lblCreatedPolls.setBounds(471, 10, 94, 15);
 		lblCreatedPolls.setText("Created Polls");
 		
 		
+		Button btnPausePoll = new Button(container, SWT.NONE);
+		btnPausePoll.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * Pause Poll
+			 * Pauses the poll by sending the request to the server.
+			 * Moves the pollId from the active polls list to the paused polls list.
+			 */
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				if(list_Active.getSelectionIndex()!=-1 && list_Active.getItemCount()!=0)
+				{
+					int focusedIndex = list_Active.getFocusIndex();	//Gets the pollID from the list.
+					String temp = list_Active.getItem(focusedIndex);
+					temp = temp.substring(0, temp.indexOf(" "));
+					//System.out.println(temp); //Debug Print.
+					admin.pausePoll(temp);	//Sends request to the server.
+					//Adds the poll to the paused list and removes it from the active list.
+					list_Paused.add(list_Active.getItem(focusedIndex));
+					list_Active.remove(focusedIndex);
+					
+					//Logic for moving the focused item in the list to the next appropriate list item.
+					if(focusedIndex == 0)
+					{
+						if(list_Active.getItemCount() == 0)
+						{
+							list_Active.setSelection(-1);
+						}
+						else
+						{
+							list_Active.setSelection(focusedIndex);
+						}
+					}
+					else if(focusedIndex == list_Active.getItemCount())
+					{
+						list_Active.setSelection(focusedIndex-1);
+					}
+					else
+					{
+						list_Active.setSelection(focusedIndex);
+					}			
+				}
+			}
+		});
+		btnPausePoll.setBounds(279, 335, 116, 25);
+		btnPausePoll.setText("<< Pause Poll");
 		
-		Button btnCreatePoll = new Button(container, SWT.NONE);
+		Button btnResumePoll = new Button(container, SWT.NONE);
+		btnResumePoll.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * Resume Poll Button
+			 *  Resumes the poll by sending the request to the server.
+			 * Moves the pollId from the paused polls list to the active polls list.
+			 */
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(list_Paused.getSelectionIndex()!=-1 && list_Paused.getItemCount()!=0)
+				{
+					int focusedIndex = list_Paused.getFocusIndex();
+					String temp = list_Paused.getItem(focusedIndex);
+					temp = temp.substring(0, temp.indexOf(" "));
+					//System.out.println(temp); 				//Debug Print
+					admin.resumePoll(temp);						//Sends request to the server.
+					//Moves the poll id from the paused list to the active list.
+					list_Active.add(list_Paused.getItem(focusedIndex));
+					list_Paused.remove(focusedIndex);
+					
+					//Logic for moving the focused item in the list to the next appropriate list item.
+					if(focusedIndex == 0)
+					{
+						if(list_Paused.getItemCount() == 0)
+						{
+							list_Paused.setSelection(-1);
+						}
+						else
+						{
+							list_Paused.setSelection(focusedIndex);
+						}
+					}
+					else if(focusedIndex == list_Paused.getItemCount())
+					{
+						list_Paused.setSelection(focusedIndex-1);
+					}
+					else
+					{
+						list_Paused.setSelection(focusedIndex);
+					}
+					
+				}
+			}
+		});
+		btnResumePoll.setBounds(264, 289, 139, 28);
+		btnResumePoll.setText("Resume Poll >>");
+		
+		Button btnClearPoll = new Button(container, SWT.NONE);
+		btnClearPoll.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * Clear Poll Button
+			 * Clears the polls information by sending the request to the server.
+			 * 
+			 *	TODO Possible
+			 *		clear the active poll id information being displayed if observer doesnt, but the observer pattern should.
+			 * 
+			 */
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(list_Polls.getFocusIndex()!=-1)
+				{
+					String temp = list_Polls.getItem(list_Polls.getFocusIndex());
+					temp = temp.substring(0, temp.indexOf(" "));
+					System.out.println(temp);
+					admin.clearPoll(temp);
+				}
+			}
+		});
+		btnClearPoll.setBounds(312, 137, 88, 25);
+		btnClearPoll.setText("Clear Poll");
+		
+		Button btnStopPoll = new Button(container, SWT.NONE);
+		btnStopPoll.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * Stop Button
+			 * Stops the poll by sending the request to the server.
+			 * Deletes the list item from the created polls list and either the active or paused list depending on the state.
+			 */
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if(list_Polls.getSelectionIndex()!=-1 && list_Polls.getItemCount()!=0)
+				{
+					int index = list_Polls.getSelectionIndex();
+					String temp = list_Polls.getItem(index);
+					String pollId = temp.substring(0,temp.indexOf(" "));	//get poll id from list.
+					
+					admin.stopPoll(pollId);	//Send request to the server.
+					list_Polls.remove(index); //remove item from list of polls list.
+					
+					//Logic for moving the focused item in the list to the next appropriate list item.
+					if(list_Active.indexOf(temp) != -1)	
+					{
+						list_Active.remove(temp);
+					}
+					else if(list_Paused.indexOf(temp) != -1)
+					{
+						list_Paused.remove(temp);
+					}
+					
+					if(index == 0)
+					{
+						if(list_Polls.getItemCount() == 0)
+						{
+							list_Polls.setSelection(-1);
+						}
+						else
+						{
+							list_Polls.setSelection(index);
+						}
+					}
+					else if(index == list_Polls.getItemCount())
+					{
+						list_Polls.setSelection(index-1);
+					}
+					else
+					{
+						list_Polls.setSelection(index);
+					}
+					
+				}
+			}
+		});
+		btnStopPoll.setBounds(312, 104, 88, 25);
+		btnStopPoll.setText("Stop Poll");
+		
+		
+		
+		Button btnDisplayPoll = new Button(container, SWT.NONE);
+		btnDisplayPoll.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * Display Poll Button
+			 * Creates a pollGUI which displays the information about the poll.
+			 * 
+			 */
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				if(list_Polls.getSelectionIndex()!=-1 && list_Polls.getItemCount()!=0)
+				{
+					int index = list_Polls.getSelectionIndex();
+					String temp = list_Polls.getItem(index);	//Gets poll ID
+					String pollID = temp.substring(0,temp.indexOf(" "));
+					
+					
+					PollGUI poll = new PollGUI(Long.parseLong(temp.substring(temp.lastIndexOf(" ") + 1)),Long.parseLong(pollID),getQuestion(pollID),getOptions(pollID),LocalPollsManager.getInstance()); //Creates the Poll GUI
+					poll.setBlockOnOpen(true);
+					poll.open();
+					
+					
+				}
+				
+			}
+		});
+		btnDisplayPoll.setBounds(302, 73, 116, 25);
+		btnDisplayPoll.setText("Display Poll");
+		
+		Label lblPausedPolls = new Label(container, SWT.NONE);
+		lblPausedPolls.setBounds(109, 224, 94, 15);
+		lblPausedPolls.setText("Paused Polls");
+		
+		Label lblActivePolls = new Label(container, SWT.NONE);
+		lblActivePolls.setBounds(471, 224, 100, 15);
+		lblActivePolls.setText("Active Polls");
+		
+		Group grpCreatePoll = new Group(container, SWT.NONE);
+		grpCreatePoll.setBounds(10, 10, 293, 188);
+		
+		text_email = new Text(grpCreatePoll, SWT.BORDER);
+		text_email.setBounds(10, 34, 181, 21);
+		text_email.setText("sample@domain.com");
+		
+		final Label lblEmailAddress = new Label(grpCreatePoll, SWT.NONE);
+		lblEmailAddress.setBounds(197, 37, 94, 15);
+		lblEmailAddress.setText("Email Address");
+		
+		text_question = new Text(grpCreatePoll, SWT.BORDER);
+		text_question.setBounds(10, 67, 181, 21);
+		
+		
+		
+		final Label lblQuestion = new Label(grpCreatePoll, SWT.NONE);
+		lblQuestion.setBounds(197, 73, 55, 15);
+		lblQuestion.setText("Question");
+		
+		final Combo combo_options = new Combo(grpCreatePoll, SWT.NONE);
+		combo_options.setBounds(10, 96, 55, 22);
+		combo_options.setToolTipText("Select the number of options the voters can choose. Must be an integer and within the max limit.");
+		combo_options.setItems(items);
+		
+		final Label lblNumberOfOptions = new Label(grpCreatePoll, SWT.NONE);
+		lblNumberOfOptions.setBounds(71, 104, 120, 15);
+		lblNumberOfOptions.setText("Number of Options");
+		
+		
+		
+		Button btnCreatePoll = new Button(grpCreatePoll, SWT.NONE);
+		btnCreatePoll.setBounds(93, 139, 109, 25);
 		btnCreatePoll.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * 	 Create Poll button.
@@ -257,220 +474,7 @@ public class AdminGUI extends ApplicationWindow {
 			}
 			
 		});
-		btnCreatePoll.setBounds(201, 10, 75, 25);
 		btnCreatePoll.setText("Create Poll");
-		
-		
-		Button btnPausePoll = new Button(container, SWT.NONE);
-		btnPausePoll.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * Pause Poll
-			 * Pauses the poll by sending the request to the server.
-			 * Moves the pollId from the active polls list to the paused polls list.
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				
-				if(list_Active.getSelectionIndex()!=-1 && list_Active.getItemCount()!=0)
-				{
-					int focusedIndex = list_Active.getFocusIndex();	//Gets the pollID from the list.
-					String temp = list_Active.getItem(focusedIndex);
-					temp = temp.substring(0, temp.indexOf(" "));
-					//System.out.println(temp); //Debug Print.
-					admin.pausePoll(temp);	//Sends request to the server.
-					//Adds the poll to the paused list and removes it from the active list.
-					list_Paused.add(list_Active.getItem(focusedIndex));
-					list_Active.remove(focusedIndex);
-					
-					//Logic for moving the focused item in the list to the next appropriate list item.
-					if(focusedIndex == 0)
-					{
-						if(list_Active.getItemCount() == 0)
-						{
-							list_Active.setSelection(-1);
-						}
-						else
-						{
-							list_Active.setSelection(focusedIndex);
-						}
-					}
-					else if(focusedIndex == list_Active.getItemCount())
-					{
-						list_Active.setSelection(focusedIndex-1);
-					}
-					else
-					{
-						list_Active.setSelection(focusedIndex);
-					}			
-				}
-			}
-		});
-		btnPausePoll.setBounds(201, 351, 75, 25);
-		btnPausePoll.setText("Pause Poll");
-		
-		Button btnResumePoll = new Button(container, SWT.NONE);
-		btnResumePoll.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * Resume Poll Button
-			 *  Resumes the poll by sending the request to the server.
-			 * Moves the pollId from the paused polls list to the active polls list.
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if(list_Paused.getSelectionIndex()!=-1 && list_Paused.getItemCount()!=0)
-				{
-					int focusedIndex = list_Paused.getFocusIndex();
-					String temp = list_Paused.getItem(focusedIndex);
-					temp = temp.substring(0, temp.indexOf(" "));
-					//System.out.println(temp); 				//Debug Print
-					admin.resumePoll(temp);						//Sends request to the server.
-					//Moves the poll id from the paused list to the active list.
-					list_Active.add(list_Paused.getItem(focusedIndex));
-					list_Paused.remove(focusedIndex);
-					
-					//Logic for moving the focused item in the list to the next appropriate list item.
-					if(focusedIndex == 0)
-					{
-						if(list_Paused.getItemCount() == 0)
-						{
-							list_Paused.setSelection(-1);
-						}
-						else
-						{
-							list_Paused.setSelection(focusedIndex);
-						}
-					}
-					else if(focusedIndex == list_Paused.getItemCount())
-					{
-						list_Paused.setSelection(focusedIndex-1);
-					}
-					else
-					{
-						list_Paused.setSelection(focusedIndex);
-					}
-					
-				}
-			}
-		});
-		btnResumePoll.setBounds(449, 351, 75, 25);
-		btnResumePoll.setText("Resume Poll");
-		
-		Button btnClearPoll = new Button(container, SWT.NONE);
-		btnClearPoll.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * Clear Poll Button
-			 * Clears the polls information by sending the request to the server.
-			 * 
-			 *	TODO Possible
-			 *		clear the active poll id information being displayed if observer doesnt, but the observer pattern should.
-			 * 
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if(list_Polls.getFocusIndex()!=-1)
-				{
-					String temp = list_Polls.getItem(list_Polls.getFocusIndex());
-					temp = temp.substring(0, temp.indexOf(" "));
-					System.out.println(temp);
-					admin.clearPoll(temp);
-				}
-			}
-		});
-		btnClearPoll.setBounds(201, 43, 75, 25);
-		btnClearPoll.setText("Clear Poll");
-		
-		Button btnStopPoll = new Button(container, SWT.NONE);
-		btnStopPoll.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * Stop Button
-			 * Stops the poll by sending the request to the server.
-			 * Deletes the list item from the created polls list and either the active or paused list depending on the state.
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if(list_Polls.getSelectionIndex()!=-1 && list_Polls.getItemCount()!=0)
-				{
-					int index = list_Polls.getSelectionIndex();
-					String temp = list_Polls.getItem(index);
-					String pollId = temp.substring(0,temp.indexOf(" "));	//get poll id from list.
-					
-					admin.stopPoll(pollId);	//Send request to the server.
-					list_Polls.remove(index); //remove item from list of polls list.
-					
-					//Logic for moving the focused item in the list to the next appropriate list item.
-					if(list_Active.indexOf(temp) != -1)	
-					{
-						list_Active.remove(temp);
-					}
-					else if(list_Paused.indexOf(temp) != -1)
-					{
-						list_Paused.remove(temp);
-					}
-					
-					if(index == 0)
-					{
-						if(list_Polls.getItemCount() == 0)
-						{
-							list_Polls.setSelection(-1);
-						}
-						else
-						{
-							list_Polls.setSelection(index);
-						}
-					}
-					else if(index == list_Polls.getItemCount())
-					{
-						list_Polls.setSelection(index-1);
-					}
-					else
-					{
-						list_Polls.setSelection(index);
-					}
-					
-				}
-			}
-		});
-		btnStopPoll.setBounds(201, 72, 75, 25);
-		btnStopPoll.setText("Stop Poll");
-		
-		
-		
-		Button btnDisplayPoll = new Button(container, SWT.NONE);
-		btnDisplayPoll.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * Display Poll Button
-			 * Creates a pollGUI which displays the information about the poll.
-			 * 
-			 */
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				
-				if(list_Polls.getSelectionIndex()!=-1 && list_Polls.getItemCount()!=0)
-				{
-					int index = list_Polls.getSelectionIndex();
-					String temp = list_Polls.getItem(index);	//Gets poll ID
-					String pollID = temp.substring(0,temp.indexOf(" "));
-					
-					
-					PollGUI poll = new PollGUI(Long.parseLong(temp.substring(temp.lastIndexOf(" ") + 1)),Long.parseLong(pollID),getQuestion(pollID),getOptions(pollID),LocalPollsManager.getInstance()); //Creates the Poll GUI
-					poll.setBlockOnOpen(true);
-					poll.open();
-					
-					
-				}
-				
-			}
-		});
-		btnDisplayPoll.setBounds(10, 170, 75, 25);
-		btnDisplayPoll.setText("Display Poll");
-		
-		Label lblPausedPolls = new Label(container, SWT.NONE);
-		lblPausedPolls.setBounds(282, 217, 133, 15);
-		lblPausedPolls.setText("Paused Polls");
-		
-		Label lblActivePolls = new Label(container, SWT.NONE);
-		lblActivePolls.setBounds(14, 217, 129, 15);
-		lblActivePolls.setText("Active Polls");
 
 		return container;
 	}
@@ -555,7 +559,7 @@ public class AdminGUI extends ApplicationWindow {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(640, 497);
+		return new Point(654, 497);
 	}
 }
 //public voteObservee

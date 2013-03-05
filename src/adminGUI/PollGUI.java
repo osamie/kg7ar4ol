@@ -35,11 +35,14 @@ public class PollGUI extends ApplicationWindow implements Observer {
 	private String[] options;
 	protected ProgressBar votingBar[];
 	protected Label lblVotes[];
+	protected LocalPollsManager manager;
+	private Label stateLabel; 
 	/**
 	 * Create the application window.
 	 */
 	public PollGUI(long numOfOptions, long pollId,String question, String options,LocalPollsManager manager) {
 		super(null);
+		this.manager = manager;
 		manager.addObserver(this); //register to get updates about poll changes
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
@@ -82,16 +85,33 @@ public class PollGUI extends ApplicationWindow implements Observer {
 			lblOptions[i].setText(options[i]);
 						
 		}
-
 		
+		
+		
+		//poll state 
+//		String pollState = getPollState(manager.getPollState(pollID));
+		
+		//poll question
 		Label lblNewLabel = new Label(container, SWT.NONE);
 		lblNewLabel.setAlignment(SWT.CENTER);
 		lblNewLabel.setBounds(10, 10, 514, 15);
-		lblNewLabel.setText(question);
-	
+		lblNewLabel.setText("Poll: " + question);
 		
+		//poll state
+//		stateLabel = new Label(container, SWT.NONE);
+//		stateLabel.setAlignment(SWT.BOTTOM);
+//		stateLabel.setBounds(10, 22, 514, 15);
+//		stateLabel.setText("current state: " + pollState);
 	
 		return container;
+	}
+	
+	
+	private String getPollState(int state){
+		if(state == Poll.PAUSED) return "PAUSED";
+		else if(state == Poll.RUNNING) return "RUNNING";
+		else if(state == Poll.STOPPED) return "STOPPED";
+		else{return " ";}
 	}
 
 	/**
@@ -134,7 +154,8 @@ public class PollGUI extends ApplicationWindow implements Observer {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText("Poll Results");
+		String pollState = getPollState(manager.getPollState(pollID));
+		newShell.setText("Poll Statistics - " + pollState);
 	}
 
 	/**
@@ -156,6 +177,15 @@ public class PollGUI extends ApplicationWindow implements Observer {
 		
 	}
 	
+	/**
+	 * Updates the poll state on the title bar
+	 */
+	private void updateState() {
+		//update state on title bar
+		String pollState = getPollState(manager.getPollState(pollID));
+		this.getShell().setText("Poll Statistics - " + pollState);
+	}
+	
 	private void updateUI(final int[]count,final int pollState) {
 		Display.getDefault().asyncExec(new Runnable() {
             public void run() {
@@ -171,7 +201,7 @@ public class PollGUI extends ApplicationWindow implements Observer {
             				votingBar[i].setSelection(count[i]);
             			}
             		}
-        			
+            		updateState();
         		}
          });
 

@@ -62,14 +62,13 @@ public class LocalPollsManager extends Observable {
 		return localPolls.containsKey(pollID);
 	}
 	
-	
-//	public int getPollState(long pollID){
-//		int state=-1;
-//		if(polls.containsKey(pollID)){
-//			state = polls.get(pollID).getState();
-//		}
-//		return state;
-//	}
+	public int getPollState(long pollID){
+		int state=-1;
+		if(localPolls.containsKey(pollID)){
+			state = localPolls.get(pollID).getState();
+		}
+		return state;
+	}
 }
 
 class LocalPoll {
@@ -91,7 +90,7 @@ class LocalPoll {
 		return votesCount[optionsIndex];
 	}
 	
-	public int getPollState(){
+	public int getState(){
 		return pollState;
 	}
 	

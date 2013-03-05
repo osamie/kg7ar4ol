@@ -43,7 +43,7 @@ public class ClientStartUp extends ApplicationWindow {
 	
 	private String[][] pollInfo;
 	private int pollInfoLength;
-	private static AdminClient admin;
+//	private static AdminClient admin;
 	private int maxOptions = 10;
 	/**
 	 * Create the application window.
@@ -84,7 +84,11 @@ public class ClientStartUp extends ApplicationWindow {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				voterClient_btn.setEnabled(false);
-				new VoterGUI().open();
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run(){
+						new VoterGUI();
+					}
+				});
 				voterClient_btn.setEnabled(true);
 			}
 		});
@@ -99,7 +103,11 @@ public class ClientStartUp extends ApplicationWindow {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				adminClient_btn.setEnabled(false);
-				new AdminGUI().open();
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run(){
+						new AdminGUI();
+					}
+				});
 				adminClient_btn.setEnabled(true);
 			}
 		});
@@ -169,7 +177,7 @@ public class ClientStartUp extends ApplicationWindow {
 		    }
 		}
 		//Creates the instance of an AdminClient with the port sent in either from command line argument or the default port.
-		admin = new AdminClient(port);
+//		admin = new AdminClient(port);
 		try {
 			ClientStartUp window = new ClientStartUp();
 			window.setBlockOnOpen(true);
@@ -178,7 +186,7 @@ public class ClientStartUp extends ApplicationWindow {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		admin.disconnect();	//Disconnect once GUI is closed.
+//		admin.disconnect();	//Disconnect once GUI is closed.
 	}
 
 	/**

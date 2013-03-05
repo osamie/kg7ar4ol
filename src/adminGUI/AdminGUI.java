@@ -58,6 +58,16 @@ public class AdminGUI extends ApplicationWindow {
 		pollInfoLength = 25;
 		pollInfo = new String[pollInfoLength][3];
 		
+		//Creates the instance of an AdminClient with the port sent in either from command line argument or the default port.
+		admin = new AdminClient(PollServer.ADMIN_PORT);
+		try {
+			setBlockOnOpen(true);
+			open();
+			Display.getCurrent().dispose();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		admin.disconnect();	//Disconnect once GUI is closed.	
 	}
 
 	
@@ -512,13 +522,8 @@ public class AdminGUI extends ApplicationWindow {
 		StatusLineManager statusLineManager = new StatusLineManager();
 		return statusLineManager;
 	}
-
-	/**
-	 * Launch the application.
-	 * @param args
-	 */
-	public static void main(String args[]) {
-		
+	
+	public static void init(String args[]){
 		int port = PollServer.ADMIN_PORT;		//Default port
 		if (args.length > 0) {
 		    try {
@@ -539,6 +544,15 @@ public class AdminGUI extends ApplicationWindow {
 			e.printStackTrace();
 		}
 		admin.disconnect();	//Disconnect once GUI is closed.
+	}
+	
+	/**
+	 * Launch the application.
+	 * @param args
+	 */
+	public static void main(String args[]) {
+//		init(args);
+		new AdminGUI();
 	}
 
 	/**

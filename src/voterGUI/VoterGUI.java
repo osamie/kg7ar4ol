@@ -35,6 +35,16 @@ public class VoterGUI extends ApplicationWindow {
 		addToolBar(SWT.FLAT | SWT.WRAP);
 		addMenuBar();
 		addStatusLine();
+		
+		int portNum = PollServer.VOTING_PORT;	
+		voter = new client.Client(portNum);
+		try {
+			this.setBlockOnOpen(true);
+			this.open();
+			Display.getCurrent().dispose();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -150,26 +160,7 @@ public class VoterGUI extends ApplicationWindow {
 	 * @param args
 	 */
 	public static void main(String args[]) {
-		int portNum = PollServer.VOTING_PORT;	
-		if (args.length > 0) {
-		    try {
-		        portNum = Integer.parseInt(args[0]);
-		    } catch (NumberFormatException e) {
-		        System.err.println("Argument" + " must be an integer");
-		        System.exit(1);
-		    }
-		}
-		voter = new client.Client(portNum);
-		try {
-			VoterGUI window = new VoterGUI();
-			window.setBlockOnOpen(true);
-			window.open();
-			Display.getCurrent().dispose();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		 
+		new VoterGUI();
 	}
 
 	/**

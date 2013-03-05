@@ -149,10 +149,8 @@ public class PollGUI extends ApplicationWindow implements Observer {
 	@Override
 	public void update(long pollID,int[]count,int state) {
 		
-		//verify if this is the correct poll
+		//verify if this is the correct poll then update
 		if((this.pollID==pollID)&&(count.length==this.lblVotes.length)){
-			//poll state is PAUSED
-			
 			updateUI(count,state);
 		}
 		

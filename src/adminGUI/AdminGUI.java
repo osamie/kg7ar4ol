@@ -7,6 +7,8 @@
  */
 package adminGUI;
 
+import model.LocalPollsManager;
+
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
@@ -450,7 +452,7 @@ public class AdminGUI extends ApplicationWindow {
 					String pollID = temp.substring(0,temp.indexOf(" "));
 					
 					
-					PollGUI poll = new PollGUI(Long.parseLong(temp.substring(temp.lastIndexOf(" ") + 1)),Long.parseLong(pollID),getQuestion(pollID),getOptions(pollID)); //Creates the Poll GUI
+					PollGUI poll = new PollGUI(Long.parseLong(temp.substring(temp.lastIndexOf(" ") + 1)),Long.parseLong(pollID),getQuestion(pollID),getOptions(pollID),LocalPollsManager.getInstance()); //Creates the Poll GUI
 					poll.setBlockOnOpen(true);
 					poll.open();
 					
@@ -545,7 +547,7 @@ public class AdminGUI extends ApplicationWindow {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText("New Application");
+		newShell.setText("POLL ADMIN");
 	}
 
 	/**

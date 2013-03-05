@@ -7,10 +7,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * PollsManager is responsible for managing the collection of polls
  * in the system.
  *  
- * @author osamie
  *
  */
-public class PollsManager {
+public class PollsManager extends Observable {
 	private ConcurrentHashMap<Long, Poll> polls;
 	private Random random;
 	
@@ -24,6 +23,7 @@ public class PollsManager {
 	}
 	
 	private PollsManager() {
+		super();
 		polls = new ConcurrentHashMap<Long, Poll>();
 		random = new Random();
 	}
@@ -124,6 +124,8 @@ public class PollsManager {
 		}
 		if(voteAdded){
 			//TODO notify observers
+			updateObservers(pollID, polls.get(pollID).getVoteStats());
+			System.out.println("notified observers!");
 		}
 		System.out.println("vote added?" + voteAdded);
 	}

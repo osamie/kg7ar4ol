@@ -7,8 +7,10 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Arrays;
 import java.util.Random;
 
+import model.Observer;
 import model.PollsManager;
 
 
@@ -62,7 +64,7 @@ class AdminListener extends Thread{
  *  Each spawned AdminWorker is responsible for handling/serving each connected 
  *  ADMIN's requests/messages
  */
-class AdminWorker extends Thread{
+class AdminWorker extends Thread implements Observer{
 	PrintWriter outToClient;
 	BufferedReader in;
 	Socket clientSocket;
@@ -74,7 +76,11 @@ class AdminWorker extends Thread{
 		 * - reassignment of clientSocket variable in Listener.listen()
 		 */
 		clientSocket = socket;
-		pollsManager = PollsManager.getInstance();
+		pollsManager = manager;
+		
+		//register itself to listen for changes to polls
+		pollsManager.addObserver(this);
+		
 		try {
 			outToClient = new PrintWriter(clientSocket.getOutputStream(), true);
 			in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -162,12 +168,16 @@ class AdminWorker extends Thread{
 				//send the new pollID TODO: remove this message...fix on client as well 
 				outToClient.println("$ " + String.valueOf(pollID));
 				
-				String message = "*% "+pollID+ "|" +optionsList.length + pollUpdateMessage.toString();
+				/*String message = "*% "+pollID+ "|" +optionsList.length + pollUpdateMessage.toString();
 				
 				//send poll update to client
 				outToClient.println(message);
 				
-				System.out.println(message);
+				System.out.println(message);*/
+				
+				int []votesCount = new int[optionsList.length];
+//				Arrays.fill(votesCount, 0); //empty votes count upon startup
+				update(pollID,votesCount);
 			}			
 		}
 		else if(request.contains("(+)"))
@@ -230,5 +240,20 @@ class AdminWorker extends Thread{
 		in.close();
 		outToClient.close();
 		clientSocket.close();
+	}
+
+	@Override
+	public void update(long pollID, int[] count) {
+		StringBuilder pollUpdateMessage=new StringBuilder(); 
+		for(int i=0;i<count.length;i++){
+			pollUpdateMessage.append("|"+count[i]);
+		}
+		String message = "*% "+pollID+ "|" +count.length + pollUpdateMessage.toString();
+		
+		//send poll update to client
+		outToClient.println(message);
+		
+		System.out.println(message);
+		
 	}
 }

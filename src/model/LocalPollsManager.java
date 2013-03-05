@@ -3,7 +3,7 @@ package model;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public class LocalPollsManager {
+public class LocalPollsManager extends Observable {
 	private ConcurrentHashMap<Long, LocalPoll> localPolls;
 	
 	/**
@@ -16,8 +16,8 @@ public class LocalPollsManager {
 	}
 	
 	private LocalPollsManager() {
-		localPolls = new ConcurrentHashMap<Long, LocalPoll>();
-		
+		super();
+		localPolls = new ConcurrentHashMap<Long, LocalPoll>();	
 	}
 	/**
 	 * The InstanceHolder handles the initialization of the instance.
@@ -50,6 +50,8 @@ public class LocalPollsManager {
 	public void updatePoll(long pollID,int[]count) {
 		LocalPoll poll = localPolls.get(pollID);
 		poll.update(count);
+		
+		updateObservers(pollID,count); //notify the GUI and/or other observers
 	}
 	
 	public int getVoteCount(long pollID,int choice){
@@ -87,7 +89,7 @@ class LocalPoll {
 		return votesCount[optionsIndex];
 	}
 	
-	public void update(int [] count) {
+	public synchronized void update(int [] count) {
 		System.arraycopy(count, 0, this.votesCount, 0, count.length);
 	}
 	

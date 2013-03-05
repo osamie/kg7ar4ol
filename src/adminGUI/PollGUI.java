@@ -6,6 +6,8 @@
 
 package adminGUI;
 
+import model.LocalPollsManager;
+import model.Observer;
 import model.PollsManager;
 
 import org.eclipse.jface.action.MenuManager;
@@ -24,17 +26,20 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-public class PollGUI extends ApplicationWindow {
+public class PollGUI extends ApplicationWindow implements Observer {
 
 	private long numOptions;
 	private long pollID;
 	private String question;
 	private String[] options;
+	protected ProgressBar votingBar[];
+	protected Label lblVotes[];
 	/**
 	 * Create the application window.
 	 */
-	public PollGUI(long numOfOptions, long pollId,String question, String options) {
+	public PollGUI(long numOfOptions, long pollId,String question, String options,LocalPollsManager manager) {
 		super(null);
+		manager.addObserver(this); //register to get updates about poll changes
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
 		addMenuBar();
@@ -55,8 +60,8 @@ public class PollGUI extends ApplicationWindow {
 	protected Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(null);
-		ProgressBar votingBar[] = new ProgressBar[(int) numOptions];
-		Label lblVotes[] = new Label[(int) numOptions];
+		votingBar= new ProgressBar[(int) numOptions];
+		lblVotes= new Label[(int) numOptions];
 		Label lblOptions[] = new Label[(int) numOptions];
 		
 		//Creates the content based on the number of options.
@@ -139,7 +144,26 @@ public class PollGUI extends ApplicationWindow {
 		return new Point(550, (int) (numOptions*35 + 120));//Size of window is based on the number of options.
 		
 	}
+
+	@Override
+	public void update(long pollID,int[]count) {
+		if((this.pollID==pollID)&&(count.length==this.lblVotes.length)){
+			updateUI(pollID,count);
+		}
+		
+	}
 	
+	private void updateUI(final long pollID,final int[]count) {
+		Display.getDefault().asyncExec(new Runnable() {
+            public void run() {
+        			for(int i=0;i<count.length;i++){
+        				lblVotes[i].setText(count[i]+"votes");
+        				votingBar[i].setSelection(count[i]);
+        			}
+        		}
+         });
+
+	}
 }
 
 

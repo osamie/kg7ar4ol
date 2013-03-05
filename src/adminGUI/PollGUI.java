@@ -157,7 +157,7 @@ public class PollGUI extends ApplicationWindow implements Observer {
 		Display.getDefault().asyncExec(new Runnable() {
             public void run() {
         			for(int i=0;i<count.length;i++){
-        				lblVotes[i].setText(count[i]+"votes");
+        				lblVotes[i].setText(count[i]+" votes");
         				votingBar[i].setSelection(count[i]);
         			}
         		}

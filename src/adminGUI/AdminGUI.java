@@ -562,4 +562,3 @@ public class AdminGUI extends ApplicationWindow {
 		return new Point(654, 497);
 	}
 }
-//public voteObservee

@@ -364,8 +364,9 @@ class MessageListener extends Thread
 			
 			//populate votesCount array for use in creating/updating a localPoll
 			for(int i=0;i<optionsCount;i++){
-				if(paramsIndex>=optionsCount) break;
+				if(paramsIndex>=params.length) break;
 				votesCount[i]=Integer.parseInt(params[paramsIndex].trim());
+				paramsIndex++;
 			}
 			
 			//first, check for local copy 

@@ -22,7 +22,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-public class optionsGUI extends ApplicationWindow {
+public class OptionsGUI extends ApplicationWindow {
 	private Text[] options;
 	public String optionsValue;
 	private int numOptions;
@@ -31,7 +31,7 @@ public class optionsGUI extends ApplicationWindow {
 	/**
 	 * Create the application window.
 	 */
-	public optionsGUI(String numOfOptions) {
+	public OptionsGUI(String numOfOptions) {
 		super(null);
 		setShellStyle(SWT.TITLE);
 		createActions();
@@ -162,7 +162,7 @@ public class optionsGUI extends ApplicationWindow {
 	 */
 	public static void main(String args[]) {
 		try {
-			optionsGUI window = new optionsGUI("5");
+			OptionsGUI window = new OptionsGUI("5");
 			window.setBlockOnOpen(true);
 			window.open();
 			Display.getCurrent().dispose();

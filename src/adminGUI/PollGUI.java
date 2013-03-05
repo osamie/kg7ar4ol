@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
 
-public class pollGUI extends ApplicationWindow {
+public class PollGUI extends ApplicationWindow {
 
 	private long numOptions;
 	private long pollID;
@@ -31,7 +31,7 @@ public class pollGUI extends ApplicationWindow {
 	/**
 	 * Create the application window.
 	 */
-	public pollGUI(long numOfOptions, long pollId,String question, String options) {
+	public PollGUI(long numOfOptions, long pollId,String question, String options) {
 		super(null);
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
@@ -109,7 +109,7 @@ public class pollGUI extends ApplicationWindow {
 	 */
 	public static void main(String args[]) {
 		try {
-			pollGUI window = new pollGUI(10,213,"TEST","TEST@");
+			PollGUI window = new PollGUI(10,213,"TEST","TEST@");
 			window.setBlockOnOpen(true);
 			window.open();
 			Display.getCurrent().dispose();

@@ -20,7 +20,7 @@ import client.Client;
 import server.PollServer;
 
 
-public class voterGUI extends ApplicationWindow {
+public class VoterGUI extends ApplicationWindow {
 	private Text text_PollID;
 	private Text text_Choice;
 	private Label lblError;
@@ -28,7 +28,7 @@ public class voterGUI extends ApplicationWindow {
 	/**
 	 * Create the application window.
 	 */
-	public voterGUI() {
+	public VoterGUI() {
 		super(null);
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
@@ -160,7 +160,7 @@ public class voterGUI extends ApplicationWindow {
 		}
 		voter = new client.Client(portNum);
 		try {
-			voterGUI window = new voterGUI();
+			VoterGUI window = new VoterGUI();
 			window.setBlockOnOpen(true);
 			window.open();
 			Display.getCurrent().dispose();

@@ -35,7 +35,7 @@ import client.AdminClient;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 
-public class adminGUI extends ApplicationWindow {
+public class AdminGUI extends ApplicationWindow {
 	
 	private String[][] pollInfo;
 	private int pollInfoLength;
@@ -46,7 +46,7 @@ public class adminGUI extends ApplicationWindow {
 	/**
 	 * Create the application window.
 	 */
-	public adminGUI() {
+	public AdminGUI() {
 		super(null);
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
@@ -216,7 +216,7 @@ public class adminGUI extends ApplicationWindow {
 				if(valid == true)	
 				{
 					try{
-						optionsGUI options = new optionsGUI(numOfOptions);
+						OptionsGUI options = new OptionsGUI(numOfOptions);
 						parent.setVisible(false);
 						options.setBlockOnOpen(true);
 						options.open();
@@ -450,7 +450,7 @@ public class adminGUI extends ApplicationWindow {
 					String pollID = temp.substring(0,temp.indexOf(" "));
 					
 					
-					pollGUI poll = new pollGUI(Long.parseLong(temp.substring(temp.lastIndexOf(" ") + 1)),Long.parseLong(pollID),getQuestion(pollID),getOptions(pollID)); //Creates the Poll GUI
+					PollGUI poll = new PollGUI(Long.parseLong(temp.substring(temp.lastIndexOf(" ") + 1)),Long.parseLong(pollID),getQuestion(pollID),getOptions(pollID)); //Creates the Poll GUI
 					poll.setBlockOnOpen(true);
 					poll.open();
 					
@@ -528,7 +528,7 @@ public class adminGUI extends ApplicationWindow {
 		//Creates the instance of an AdminClient with the port sent in either from command line argument or the default port.
 		admin = new AdminClient(port);
 		try {
-			adminGUI window = new adminGUI();
+			AdminGUI window = new AdminGUI();
 			window.setBlockOnOpen(true);
 			window.open();
 			Display.getCurrent().dispose();

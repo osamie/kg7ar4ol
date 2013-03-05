@@ -158,8 +158,7 @@ class AdminWorker extends Thread{
 				System.out.println("new pollID:" + pollID);
 				System.out.println("has poll?"+pollsManager.hasPoll(pollID));
 				outToClient.println("$ " + String.valueOf(pollID));
-			}
-			
+			}			
 		}
 		else if(request.contains("(+)"))
 		{
@@ -172,19 +171,33 @@ class AdminWorker extends Thread{
 			 * message format: pollID
 			 */
 			request = request.replace("(!)", "").trim();
-			
 			long pollID = Long.parseLong(request);
-			System.out.println("pollstate before:" + pollsManager.getPollState(pollID));
 			pollsManager.pausePoll(pollID);
-			System.out.println("pollstate:" + pollsManager.getPollState(pollID));
 		}
 		else if(request.contains("(X)"))
 		{
-			//stopPoll
+			/*
+			 * stopPoll
+			 * message format: pollID
+			 */
+			request = request.replace("(X)", "").trim();
+			
+			long pollID = Long.parseLong(request);
+			pollsManager.stopPoll(pollID);
+//			System.out.println("pollstate:" + pollsManager.getPollState(pollID));
 		}
 		else if(request.contains("(-)"))
 		{
-			//clearPoll
+			/*
+			 * clearPoll
+			 * message format: pollID
+			 */
+			request = request.replace("(-)", "").trim();
+			
+			long pollID = Long.parseLong(request);
+			System.out.println("pollstate before:" + pollsManager.getPollState(pollID));
+			pollsManager.clearPoll(pollID);
+			System.out.println("pollstate:" + pollsManager.getPollState(pollID));
 		}
 		else if(request.contains("(0)"))
 		{

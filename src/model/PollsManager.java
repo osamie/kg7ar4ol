@@ -93,13 +93,14 @@ public class PollsManager extends Observable {
 	}
 	
 	/**
-	 * 
+	 * Clears the current vote counts for the specified poll
 	 * @param pollID
 	 */
 	public void clearPoll(long pollID)
 	{
 		if(polls.containsKey(pollID)){
 			polls.get(pollID).clearPoll();
+			updateObservers(pollID, polls.get(pollID).getVoteStats());
 		}
 	}
 	
@@ -125,7 +126,7 @@ public class PollsManager extends Observable {
 		if(voteAdded){
 			//TODO notify observers
 			updateObservers(pollID, polls.get(pollID).getVoteStats());
-			System.out.println("notified observers!");
+//			System.out.println("notified observers!");
 		}
 		System.out.println("vote added?" + voteAdded);
 	}

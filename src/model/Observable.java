@@ -17,9 +17,9 @@ public class Observable {
 		observers.remove(observer);
 	}
 	
-	public void updateObservers(long pollID,int[]count){
+	public void updateObservers(long pollID,int[]count,int state){
 		for(Observer observer:observers){
-			observer.update(pollID,count);
+			observer.update(pollID,count,state);
 		}
 	}
 }

@@ -177,7 +177,7 @@ class AdminWorker extends Thread implements Observer{
 				
 				int []votesCount = new int[optionsList.length];
 //				Arrays.fill(votesCount, 0); //empty votes count upon startup
-				update(pollID,votesCount);
+				update(pollID,votesCount,pollsManager.getPollState(pollID));
 			}			
 		}
 		else if(request.contains("(+)"))
@@ -243,12 +243,12 @@ class AdminWorker extends Thread implements Observer{
 	}
 
 	@Override
-	public void update(long pollID, int[] count) {
+	public void update(long pollID, int[] count,int pollState) {
 		StringBuilder pollUpdateMessage=new StringBuilder(); 
 		for(int i=0;i<count.length;i++){
 			pollUpdateMessage.append("|"+count[i]);
 		}
-		String message = "*% "+pollID+ "|" +count.length + pollUpdateMessage.toString();
+		String message = "*% "+pollID+ "|" + pollState + "|" +count.length + pollUpdateMessage.toString();
 		
 		//send poll update to client
 		outToClient.println(message);

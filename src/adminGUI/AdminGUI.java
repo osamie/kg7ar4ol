@@ -326,12 +326,10 @@ public class AdminGUI extends ApplicationWindow {
 					int index = list_Polls.getSelectionIndex();
 					String temp = list_Polls.getItem(index);	//Gets poll ID
 					String pollID = temp.substring(0,temp.indexOf(" "));
-					
-					
+										
 					PollGUI poll = new PollGUI(Long.parseLong(temp.substring(temp.lastIndexOf(" ") + 1)),Long.parseLong(pollID),getQuestion(pollID),getOptions(pollID),LocalPollsManager.getInstance()); //Creates the Poll GUI
 					poll.setBlockOnOpen(true);
 					poll.open();
-					
 					
 				}
 				

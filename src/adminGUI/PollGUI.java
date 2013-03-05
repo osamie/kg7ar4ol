@@ -8,6 +8,7 @@ package adminGUI;
 
 import model.LocalPollsManager;
 import model.Observer;
+import model.Poll;
 import model.PollsManager;
 
 import org.eclipse.jface.action.MenuManager;
@@ -146,20 +147,33 @@ public class PollGUI extends ApplicationWindow implements Observer {
 	}
 
 	@Override
-	public void update(long pollID,int[]count) {
+	public void update(long pollID,int[]count,int state) {
+		
+		//verify if this is the correct poll
 		if((this.pollID==pollID)&&(count.length==this.lblVotes.length)){
-			updateUI(pollID,count);
+			//poll state is PAUSED
+			
+			updateUI(count,state);
 		}
 		
 	}
 	
-	private void updateUI(final long pollID,final int[]count) {
+	private void updateUI(final int[]count,final int pollState) {
 		Display.getDefault().asyncExec(new Runnable() {
             public void run() {
-        			for(int i=0;i<count.length;i++){
-        				lblVotes[i].setText(count[i]+" votes");
-        				votingBar[i].setSelection(count[i]);
-        			}
+            		if (pollState==Poll.STOPPED){
+            			for(int i=0;i<count.length;i++){
+            				lblVotes[i].setText(count[i]+" votes");
+            				votingBar[i].setVisible(false);
+            			}
+            		}
+            		else{
+            			for(int i=0;i<count.length;i++){
+            				lblVotes[i].setText(count[i]+" votes");
+            				votingBar[i].setSelection(count[i]);
+            			}
+            		}
+        			
         		}
          });
 

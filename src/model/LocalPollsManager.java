@@ -35,8 +35,8 @@ public class LocalPollsManager extends Observable {
 	 * Create a new local Poll and add it to the collection of polls
 	 * @return pollID
 	 */
-	public long createNewPoll(long pollID,String pollQuestion,int[] optionsList){
-		LocalPoll newPoll = new LocalPoll(pollID, pollQuestion, optionsList);
+	public long createNewPoll(long pollID,String pollQuestion,int[] optionsList,int pollState){
+		LocalPoll newPoll = new LocalPoll(pollID, pollQuestion, optionsList,pollState);
 		localPolls.put(pollID, newPoll);
 		return pollID;
 	}
@@ -47,11 +47,11 @@ public class LocalPollsManager extends Observable {
 	 * @param pollID
 	 * @param count
 	 */
-	public void updatePoll(long pollID,int[]count) {
+	public void updatePoll(long pollID,int[]count,int state) {
 		LocalPoll poll = localPolls.get(pollID);
-		poll.update(count);
+		poll.update(count,state);
 		
-		updateObservers(pollID,count); //notify the GUI and/or other observers
+		updateObservers(pollID,count,state); //notify the GUI and/or other observers
 	}
 	
 	public int getVoteCount(long pollID,int choice){
@@ -76,11 +76,13 @@ class LocalPoll {
 	private int[] votesCount;
 	private long pollID;
 	String pollQuestion;
+	int pollState;
 	
-	public LocalPoll(long pollID,String pollQuestion,int [] count) {
+	public LocalPoll(long pollID,String pollQuestion,int [] count,int state) {
 		this.pollID = pollID;
 		this.pollQuestion = pollQuestion;
 		votesCount = new int[count.length];
+		pollState = state;
 		System.arraycopy(count, 0, votesCount, 0, count.length);
 	}
 	
@@ -89,7 +91,12 @@ class LocalPoll {
 		return votesCount[optionsIndex];
 	}
 	
-	public synchronized void update(int [] count) {
+	public int getPollState(){
+		return pollState;
+	}
+	
+	public synchronized void update(int [] count,int pollState) {
+		this.pollState = pollState;
 		System.arraycopy(count, 0, this.votesCount, 0, count.length);
 	}
 	

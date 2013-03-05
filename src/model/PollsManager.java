@@ -76,7 +76,9 @@ public class PollsManager extends Observable {
 	public void pausePoll(long pollID)
 	{
 		if(polls.containsKey(pollID)){
+			Poll poll = polls.get(pollID);
 			polls.get(pollID).pausePoll();
+			updateObservers(pollID, polls.get(pollID).getVoteStats(),poll.getState());
 		}
 	}
 	
@@ -87,9 +89,9 @@ public class PollsManager extends Observable {
 	public void stopPoll(long pollID)
 	{
 		//TODO print out or email poll results
-		System.out.println("Ending Poll:" + pollID);
+		updateObservers(pollID, polls.get(pollID).getVoteStats(),Poll.STOPPED);
 		polls.remove(pollID);
-//		System.out.println("poll exists AFTER:" + polls.containsKey(pollID));	
+		
 	}
 	
 	/**
@@ -99,8 +101,9 @@ public class PollsManager extends Observable {
 	public void clearPoll(long pollID)
 	{
 		if(polls.containsKey(pollID)){
-			polls.get(pollID).clearPoll();
-			updateObservers(pollID, polls.get(pollID).getVoteStats());
+			Poll poll = polls.get(pollID);
+			poll.clearPoll();
+			updateObservers(pollID, polls.get(pollID).getVoteStats(),poll.getState());
 		}
 	}
 	
@@ -120,12 +123,13 @@ public class PollsManager extends Observable {
 		boolean voteAdded=false;
 		
 		int optionIndex = choice-1; //corresponds to an array index in Poll
+		Poll poll= polls.get(pollID);
 		if(polls.containsKey(pollID)){
-			voteAdded = polls.get(pollID).addVote(optionIndex,voterID);
+			voteAdded = poll.addVote(optionIndex,voterID);
 		}
 		if(voteAdded){
 			//TODO notify observers
-			updateObservers(pollID, polls.get(pollID).getVoteStats());
+			updateObservers(pollID, poll.getVoteStats(),poll.getState());
 //			System.out.println("notified observers!");
 		}
 		System.out.println("vote added?" + voteAdded);
@@ -154,7 +158,9 @@ public class PollsManager extends Observable {
 	public void resumePoll(long pollID)
 	{	
 		if(polls.containsKey(pollID)){
-			polls.get(pollID).resumePoll();
+			Poll poll= polls.get(pollID);
+			poll.resumePoll();
+			updateObservers(pollID, poll.getVoteStats(),poll.getState());
 		}
 	}
 }

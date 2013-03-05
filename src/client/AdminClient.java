@@ -349,7 +349,7 @@ class MessageListener extends Thread
 			/*
 			 * Poll update received from server
 			 * Expected message format:
-			 * 		*%<pollID> | optionsCount | <option1Count> | <option2Count>...
+			 * 		*%<pollID:long> | <pollState:int> | <optionsCount:int> | <option1Count:int> | <option2Count:int>...
 			 */
 			
 			input = input.replace("*%", "").trim();
@@ -358,9 +358,10 @@ class MessageListener extends Thread
 			if(params.length<3) return;
 			
 			long pollID = Long.parseLong(params[0].trim());
-			int optionsCount = Integer.parseInt(params[1].trim());
+			int pollState = Integer.parseInt(params[1].trim());
+			int optionsCount = Integer.parseInt(params[2].trim());
 			int[] votesCount = new int[optionsCount]; 
-			int paramsIndex=2;
+			int paramsIndex=3;
 			
 			//populate votesCount array for use in creating/updating a localPoll
 			for(int i=0;i<optionsCount;i++){
@@ -371,10 +372,10 @@ class MessageListener extends Thread
 			
 			//first, check for local copy 
 			if(pollsManager.hasPoll(pollID)){
-				pollsManager.updatePoll(pollID, votesCount); //update
+				pollsManager.updatePoll(pollID, votesCount,pollState); //update
 			}else{
 				//create a local copy of poll if non exists
-				pollsManager.createNewPoll(pollID, " ", votesCount);
+				pollsManager.createNewPoll(pollID, " ", votesCount,pollState);
 			}		
 		}
 	}

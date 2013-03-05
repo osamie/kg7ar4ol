@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Text;
 
 import client.Client;
 import server.PollServer;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 
 public class VoterGUI extends ApplicationWindow {
@@ -177,6 +178,7 @@ public class VoterGUI extends ApplicationWindow {
 	 */
 	@Override
 	protected void configureShell(Shell newShell) {
+		newShell.setImage(SWTResourceManager.getImage(VoterGUI.class, "/model/polls-icon.png"));
 		super.configureShell(newShell);
 		newShell.setText("Voter");
 	}

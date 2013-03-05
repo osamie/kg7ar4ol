@@ -63,7 +63,6 @@ public class AdminGUI extends ApplicationWindow {
 	
 	private Boolean verifyPollId()
 	{
-		
 		return true;
 	}
 	private String getQuestion(String pollID)
@@ -548,6 +547,7 @@ public class AdminGUI extends ApplicationWindow {
 	 */
 	@Override
 	protected void configureShell(Shell newShell) {
+		newShell.setImage(SWTResourceManager.getImage(AdminGUI.class, "/model/polls-icon.png"));
 		super.configureShell(newShell);
 		newShell.setText("POLL ADMIN");
 	}

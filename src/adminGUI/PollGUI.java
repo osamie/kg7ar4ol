@@ -153,6 +153,7 @@ public class PollGUI extends ApplicationWindow implements Observer {
 	 */
 	@Override
 	protected void configureShell(Shell newShell) {
+		newShell.setImage(SWTResourceManager.getImage(PollGUI.class, "/model/polls-icon.png"));
 		super.configureShell(newShell);
 		String pollState = getPollState(manager.getPollState(pollID));
 		newShell.setText("Poll Statistics - " + pollState);

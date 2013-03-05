@@ -177,6 +177,7 @@ public class OptionsGUI extends ApplicationWindow {
 	 */
 	@Override
 	protected void configureShell(Shell newShell) {
+		newShell.setImage(SWTResourceManager.getImage(OptionsGUI.class, "/model/polls-icon.png"));
 		super.configureShell(newShell);
 		newShell.setText("Input Options");
 	}

@@ -86,7 +86,8 @@ public class PollsManager {
 	 */
 	public void stopPoll(long pollID)
 	{
-//		System.out.println("poll exists before:" + polls.containsKey(pollID));
+		//TODO print out or email poll results
+		System.out.println("Ending Poll:" + pollID);
 		polls.remove(pollID);
 //		System.out.println("poll exists AFTER:" + polls.containsKey(pollID));	
 	}

@@ -158,8 +158,7 @@ class AdminWorker extends Thread{
 				System.out.println("new pollID:" + pollID);
 				System.out.println("has poll?"+pollsManager.hasPoll(pollID));
 				outToClient.println("$ " + String.valueOf(pollID));
-			}
-			
+			}			
 		}
 		else if(request.contains("(+)"))
 		{
@@ -173,39 +172,46 @@ class AdminWorker extends Thread{
 			 */
 			request = request.replace("(!)", "").trim();
 			long pollID = Long.parseLong(request);
-			System.out.println("pollstate before:" + pollsManager.getPollState(pollID));
 			pollsManager.pausePoll(pollID);
-			System.out.println("pollstate:" + pollsManager.getPollState(pollID));
-//			Poll 
-//			System.out.println();
 		}
 		else if(request.contains("(X)"))
 		{
-			//stopPoll
+			/*
+			 * stopPoll
+			 * message format: pollID
+			 */
+			request = request.replace("(X)", "").trim();
+			
+			long pollID = Long.parseLong(request);
+			pollsManager.stopPoll(pollID);
+//			System.out.println("pollstate:" + pollsManager.getPollState(pollID));
 		}
 		else if(request.contains("(-)"))
 		{
-			//clearPoll
+			/*
+			 * clearPoll
+			 * message format: pollID
+			 */
+			request = request.replace("(-)", "").trim();
+			
+			long pollID = Long.parseLong(request);
+			System.out.println("pollstate before:" + pollsManager.getPollState(pollID));
+			pollsManager.clearPoll(pollID);
+			System.out.println("pollstate:" + pollsManager.getPollState(pollID));
 		}
 		else if(request.contains("(0)"))
 		{
-			//resumePoll
+			/*
+			 * resumePoll
+			 * message format: pollID
+			 */
+			request = request.replace("(0)", "").trim();
+			
+			long pollID = Long.parseLong(request);
+			System.out.println("\npollstate before:" + pollsManager.getPollState(pollID));
+			pollsManager.resumePoll(pollID);
+			System.out.println("pollstate:" + pollsManager.getPollState(pollID));
 		}
-		
-		/*
-		 * TODO
-		 * if request is createPoll
-		 *  { //generate pollID 
-		 *    //using java.util.uuid or APACHE lib
-		 * 		import java.util.UUID;
-				String uuid = UUID.randomUUID().toString();
-				System.out.println("uuid = " + uuid);
-				
-				//Apache lib
-				org.apache.commons.lang.RandomStringUtils
-			}
-		 *  
-		 */
 	}
 	
 	@Override

@@ -319,7 +319,7 @@ public class adminGUI extends ApplicationWindow {
 				{
 					int focusedIndex = list_Paused.getFocusIndex();
 					String temp = list_Paused.getItem(focusedIndex);
-					temp = temp.substring(0, temp.indexOf(" ")-1);
+					temp = temp.substring(0, temp.indexOf(" "));
 					//System.out.println(temp); 				//Debug Print
 					admin.resumePoll(temp);						//Sends request to the server.
 					//Moves the poll id from the paused list to the active list.
@@ -368,7 +368,7 @@ public class adminGUI extends ApplicationWindow {
 				if(list_Polls.getFocusIndex()!=-1)
 				{
 					String temp = list_Polls.getItem(list_Polls.getFocusIndex());
-					temp = temp.substring(0, temp.indexOf(" ")-1);
+					temp = temp.substring(0, temp.indexOf(" "));
 					System.out.println(temp);
 					admin.clearPoll(temp);
 				}
@@ -390,7 +390,7 @@ public class adminGUI extends ApplicationWindow {
 				{
 					int index = list_Polls.getSelectionIndex();
 					String temp = list_Polls.getItem(index);
-					String pollId = temp.substring(0,temp.indexOf(" ") - 1);	//get poll id from list.
+					String pollId = temp.substring(0,temp.indexOf(" "));	//get poll id from list.
 					
 					admin.stopPoll(pollId);	//Send request to the server.
 					list_Polls.remove(index); //remove item from list of polls list.

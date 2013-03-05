@@ -9,6 +9,8 @@ import java.net.UnknownHostException;
 
 import java.util.concurrent.Semaphore;
 
+import model.LocalPollsManager;
+
 import server.PollServer;
 
 
@@ -52,7 +54,7 @@ public class AdminClient {
 		} 
 		poll_sem = new Semaphore(1);//initialize semaphore value to 1
 		block_sem = new Semaphore(1);
-		messageReciever = new MessageListener(this);
+		messageReciever = new MessageListener(this,LocalPollsManager.getInstance());
 		messageReciever.start();
 	}
 	
@@ -278,18 +280,18 @@ public class AdminClient {
 
 /**
  * Listens to all messages from the server
- * @author geoffkinson
- *
  */
 class MessageListener extends Thread
 {
 	BufferedReader fromServer;
 	AdminClient adminClient;
 	Socket socket;
-	MessageListener(AdminClient client)
+	LocalPollsManager pollsManager;
+	MessageListener(AdminClient client,LocalPollsManager manager)
 	{
 		socket = client.adminSocket;
 		adminClient = client;
+		pollsManager = manager;
 		try {
 			//acquires semaphore on AdminClient startup 
 			adminClient.poll_sem.acquire();
@@ -312,32 +314,67 @@ class MessageListener extends Thread
 		{
 		try {
 			input = fromServer.readLine();
-			System.out.println(input);
-			if(input.contains("$") == true)
-			{
-				//message received from server is a pollID
-				System.out.println("TRUE");
-				Long id = Long.parseLong(input.substring(input.indexOf("$") + 2));
-				AdminClient.newPollId = id;
-				System.out.println(id);
-				//allow admin client use newPollID
-				adminClient.poll_sem.release();
-				
-				try {
-					adminClient.block_sem.acquire();//Waits until the client has the poll_sem
-					adminClient.poll_sem.acquire();//Waits until the admin is done with the pollID
-					adminClient.block_sem.release();//releases for next run through
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}			
-			}
-			else{ }
+			System.out.println(input);	
+			processServerMessage(input);
+		
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
 		
 		}		
+	}
+
+	private void processServerMessage(String input) {
+		if(input.contains("$") == true)
+		{
+			//message received from server is a pollID
+			System.out.println("TRUE");
+			Long id = Long.parseLong(input.substring(input.indexOf("$") + 2));
+			AdminClient.newPollId = id;
+			System.out.println(id);
+			//allow admin client use newPollID
+			adminClient.poll_sem.release();
+			
+			try {
+				adminClient.block_sem.acquire();//Waits until the client has the poll_sem
+				adminClient.poll_sem.acquire();//Waits until the admin is done with the pollID
+				adminClient.block_sem.release();//releases for next run through
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
+		}
+		else if(input.contains("*%")){
+			/*
+			 * Poll update received from server
+			 * Expected message format:
+			 * 		*%<pollID> | optionsCount | <option1Count> | <option2Count>...
+			 */
+			
+			input = input.replace("*%", "").trim();
+			String[] params = input.split("\\|");
+			
+			if(params.length<3) return;
+			
+			long pollID = Long.parseLong(params[0].trim());
+			int optionsCount = Integer.parseInt(params[1].trim());
+			int[] votesCount = new int[optionsCount]; 
+			int paramsIndex=2;
+			
+			//populate votesCount array for use in creating/updating a localPoll
+			for(int i=0;i<optionsCount;i++){
+				if(paramsIndex>=optionsCount) break;
+				votesCount[i]=Integer.parseInt(params[paramsIndex].trim());
+			}
+			
+			//first, check for local copy 
+			if(pollsManager.hasPoll(pollID)){
+				pollsManager.updatePoll(pollID, votesCount); //update
+			}else{
+				//create a local copy of poll if non exists
+				pollsManager.createNewPoll(pollID, " ", votesCount);
+			}		
+		}
 	}
 }

@@ -135,9 +135,8 @@ class AdminWorker extends Thread{
 			request = request.replace("->", "");
 			
 			String [] params = request.split("\\|");
-			if (params.length<4){
-				
-				return; //wrong format
+			if (params.length<4){		
+				return; //a wrong message format
 			}
 			else{
 				String emailAddress=params[0];
@@ -147,17 +146,28 @@ class AdminWorker extends Thread{
 				String[]optionsList = new String[numOfOptions];
 				int optionsCountIndex=3;
 				int paramsIndex=optionsCountIndex;
+				StringBuilder pollUpdateMessage=new StringBuilder();
 				
 				//populate optionsList
 				for(int i=0;i<optionsList.length;i++){
 					if(paramsIndex>=params.length) break;
 					optionsList[i] = params[paramsIndex++];
+					pollUpdateMessage.append("|0");
 				}
 				
 				long pollID = pollsManager.createNewPoll(0, emailAddress, optionsList);
 				System.out.println("new pollID:" + pollID);
 				System.out.println("has poll?"+pollsManager.hasPoll(pollID));
+				
+				//send the new pollID TODO: remove this message...fix on client as well 
 				outToClient.println("$ " + String.valueOf(pollID));
+				
+				String message = "*% "+pollID+ "|" +optionsList.length + pollUpdateMessage.toString();
+				
+				//send poll update to client
+				outToClient.println(message);
+				
+				System.out.println(message);
 			}			
 		}
 		else if(request.contains("(+)"))

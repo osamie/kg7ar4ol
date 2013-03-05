@@ -138,11 +138,10 @@ public class PollsManager {
 	 * @return null if the poll does not exist and array of int otherwise 
 	 */
 	public int[] getVotes(long pollID){
-		int[] votes = null;
 		if(polls.containsKey(pollID)){
-			votes = polls.get(pollID).getVoteStats();
+			return polls.get(pollID).getVoteStats();
 		}
-		return votes;
+		return null;
 	}
 	
 	/**

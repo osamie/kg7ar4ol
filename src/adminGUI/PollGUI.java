@@ -6,6 +6,8 @@
 
 package adminGUI;
 
+import model.PollsManager;
+
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
@@ -56,6 +58,7 @@ public class PollGUI extends ApplicationWindow {
 		ProgressBar votingBar[] = new ProgressBar[(int) numOptions];
 		Label lblVotes[] = new Label[(int) numOptions];
 		Label lblOptions[] = new Label[(int) numOptions];
+		
 		//Creates the content based on the number of options.
 		//The window is sized accordingly and the positioning.
 		for(int i = 0; i < numOptions; i++)
@@ -107,16 +110,16 @@ public class PollGUI extends ApplicationWindow {
 	 * Launch the application.
 	 * @param args
 	 */
-	public static void main(String args[]) {
-		try {
-			PollGUI window = new PollGUI(10,213,"TEST","TEST@");
-			window.setBlockOnOpen(true);
-			window.open();
-			Display.getCurrent().dispose();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void main(String args[]) {
+//		try {
+//			PollGUI window = new PollGUI(10,213,"TEST","TEST@");
+//			window.setBlockOnOpen(true);
+//			window.open();
+//			Display.getCurrent().dispose();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	/**
 	 * Configure the shell.
@@ -125,7 +128,7 @@ public class PollGUI extends ApplicationWindow {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText("New Application");
+		newShell.setText("Poll Results");
 	}
 
 	/**
@@ -136,4 +139,7 @@ public class PollGUI extends ApplicationWindow {
 		return new Point(550, (int) (numOptions*35 + 120));//Size of window is based on the number of options.
 		
 	}
+	
 }
+
+

@@ -378,7 +378,7 @@ public class AdminGUI extends ApplicationWindow {
 		final Combo combo_options = new Combo(grpCreatePoll, SWT.NONE);
 		combo_options.setBounds(10, 96, 55, 22);
 		combo_options.setToolTipText("Select the number of options the voters can choose. Must be an integer and within the max limit.");
-		combo_options.setItems(items);
+		combo_options.setItems(new String[] {"2", "3", "4", "5", "6", "7", "8", "9", "10", "11"});
 		
 		final Label lblNumberOfOptions = new Label(grpCreatePoll, SWT.NONE);
 		lblNumberOfOptions.setBounds(71, 104, 120, 15);

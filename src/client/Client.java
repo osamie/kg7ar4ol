@@ -56,7 +56,10 @@ public class Client {
 		return true;
 	}
 	 
-	 
+	 public void close()
+	 {
+		 this.sendReceiveSocket.close();
+	 }
 	 /**
 	 * @param args
 	 */

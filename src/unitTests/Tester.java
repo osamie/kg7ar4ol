@@ -20,6 +20,7 @@ import server.PollServer;
 import client.AdminClient;
 import client.Client;
 import model.*;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 public class Tester {
 
@@ -81,6 +82,7 @@ public class Tester {
 	 */
 	protected void createContents() {
 		shlTestingEnvironment = new Shell();
+		shlTestingEnvironment.setImage(SWTResourceManager.getImage(Tester.class, "/unitTests/RO-Mx2-64_meter.png"));
 		shlTestingEnvironment.setSize(525, 400);
 		shlTestingEnvironment.setText("Testing Environment");
 		
@@ -166,7 +168,6 @@ public class Tester {
 		
 		final Label lblTotVotes = new Label(grpData, SWT.NONE);
 		lblTotVotes.setBounds(136, 43, 55, 15);
-		lblTotVotes.setText("New Label");
 		
 		Button btnGetVoteData = new Button(shlTestingEnvironment, SWT.NONE);
 		btnGetVoteData.addSelectionListener(new SelectionAdapter() {

@@ -74,7 +74,7 @@ public class Milestone3Testing {
 		long pollID;
 		int votes[] = new int[10];
 		
-		client.AdminClient admin = new client.AdminClient(server.ADMIN_PORT);
+		client.AdminClient admin = new client.AdminClient(server.ADMIN_PORT,"127.0.0.1");
 		client.Client voters[] = new client.Client[numberOfVotes];
 		
 		pollID = admin.createPoll("test@test.com|Testing Question|2|Yes|No");
@@ -123,7 +123,7 @@ public class Milestone3Testing {
 	public boolean massPolls(int numberOfPolls)
 	{
 		out.println(System.nanoTime() + " -------------Mass Polls Test---------Creating " + numberOfPolls + " for one admin.");
-		AdminClient admin = new AdminClient(server.ADMIN_PORT);
+		AdminClient admin = new AdminClient(server.ADMIN_PORT,"127.0.0.1");
 		long pollID;
 		int numOfCreatedPolls = 0;
 		out.println(System.nanoTime() + " - Starting creating polls");
@@ -159,7 +159,7 @@ public class Milestone3Testing {
 		
 		for(int i = 0;i<numberOfAdmins;i++)
 		{
-			admins[i] = new AdminClient(server.ADMIN_PORT);
+			admins[i] = new AdminClient(server.ADMIN_PORT,"127.0.0.1");
 			
 		}
 		out.println(System.nanoTime() + " - Finished creating Admins, Verifying");
@@ -190,7 +190,7 @@ public class Milestone3Testing {
 		long pollID;
 		int votes[] = new int[10];
 		voter voting[] = new voter[numberOfVotes];
-		AdminClient admin = new AdminClient(server.ADMIN_PORT);
+		AdminClient admin = new AdminClient(server.ADMIN_PORT,"127.0.0.1");
 		
 		pollID = admin.createPoll("test@test.com|poll|2|yes|no");
 		

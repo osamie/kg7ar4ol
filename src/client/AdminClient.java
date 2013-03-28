@@ -26,17 +26,19 @@ public class AdminClient {
 	private int polls[] = new int[10];
 	private long adminID = 0;
 	private MessageListener messageReciever;
+	private String IPAddress = "127.0.0.1";
 
 	/**
 	 * Connects the client to the server and initializes the read and write steams/buffers
 	 * @param portNum
 	 */
-	public AdminClient(int portNum)
-	{			
+	public AdminClient(int portNum, String IP)
+	{		
+		IPAddress = IP;
 		numOfPolls = 0;
 		try {
 			// Bind a socket to any available port on the local host machine. 
-			adminSocket = new Socket("127.0.0.1", portNum);
+			adminSocket = new Socket(IPAddress, portNum);
 			
 		} catch (UnknownHostException e1) {
 			System.err.println("Don't know about host");
@@ -259,7 +261,7 @@ public class AdminClient {
 		        System.exit(1);
 		    }
 		}
-		AdminClient myPoll = new AdminClient(port);
+		AdminClient myPoll = new AdminClient(port, "127.0.0.1");
 		while(myPoll.adminSocket.isConnected()){
 			
 			System.out.print("\nSend Request: ");

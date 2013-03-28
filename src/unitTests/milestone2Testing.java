@@ -73,7 +73,7 @@ public class milestone2Testing {
 	
 	private boolean sessionControlTest()
 	{
-		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT);
+		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT,"127.0.0.1");
 		long pollID = admin.createPoll("TEST@TEST.com|Session Control|2|Yes|No");
 		PollsManager manager = PollsManager.getInstance();
 		
@@ -145,7 +145,7 @@ public class milestone2Testing {
 	
 	private boolean invalidVotesTest() {
 		
-		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT);
+		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT,"127.0.0.1");
 		Client testClient = new Client(PollServer.VOTING_PORT);
 		long pollID = admin.createPoll("TEST@TEST.com|Invalid Votes|2|Yes|No");
 		PollsManager manager = PollsManager.getInstance();
@@ -198,7 +198,7 @@ public class milestone2Testing {
 	}
 	private boolean lateVotesTest() {
 		
-		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT);
+		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT,"127.0.0.1");
 		Client testClient = new Client(PollServer.VOTING_PORT);
 		long pollID = admin.createPoll("TEST@TEST.com|Poll ID|2|Yes|No");
 		PollsManager manager = PollsManager.getInstance();
@@ -278,7 +278,7 @@ public class milestone2Testing {
 	public boolean repeatedVotesTest(int numberOfVotes)
 	{
 		Client testClient = new Client(PollServer.VOTING_PORT);
-		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT);
+		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT,"127.0.0.1");
 		long pollID = admin.createPoll("gasg@gsag.com|who are you|2|yes|no");
 		PollsManager manager = PollsManager.getInstance();
 		

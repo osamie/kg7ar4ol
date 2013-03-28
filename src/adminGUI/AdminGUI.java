@@ -59,7 +59,7 @@ public class AdminGUI extends ApplicationWindow {
 		pollInfo = new String[pollInfoLength][3];
 		
 		//Creates the instance of an AdminClient with the port sent in either from command line argument or the default port.
-		admin = new AdminClient(PollServer.ADMIN_PORT);
+		admin = new AdminClient(PollServer.ADMIN_PORT, "127.0.0.1");
 		try {
 			setBlockOnOpen(true);
 			open();
@@ -534,7 +534,7 @@ public class AdminGUI extends ApplicationWindow {
 		    }
 		}
 		//Creates the instance of an AdminClient with the port sent in either from command line argument or the default port.
-		admin = new AdminClient(port);
+		admin = new AdminClient(port, "127.0.0.1");
 		try {
 			AdminGUI window = new AdminGUI();
 			window.setBlockOnOpen(true);

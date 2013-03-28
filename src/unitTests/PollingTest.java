@@ -60,7 +60,7 @@ public class PollingTest {
 	public boolean multiplePolls(int numberOfPolls)
 	{
 		Boolean testResult = true;
-		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT);
+		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT,"127.0.0.1");
 		Client testClient = new Client(PollServer.VOTING_PORT);
 		long pollIds[] = new long[numberOfPolls];
 		
@@ -166,7 +166,7 @@ public class PollingTest {
 		
 		//Create Admins and test their connections  
 		for(int i = 0; i<admins.length;i++){
-			if (!(new AdminClient(PollServer.ADMIN_PORT).isConnected())){
+			if (!(new AdminClient(PollServer.ADMIN_PORT,"127.0.0.1").isConnected())){
 				testResult = false;
 				break;
 			}

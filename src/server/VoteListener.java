@@ -1,6 +1,8 @@
 package server;
 
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
@@ -16,8 +18,16 @@ class VoteListener extends Thread {
 	private DatagramSocket receiveSocket = null;
 	private DatagramPacket receivePacket; 
 	private PollsManager pollsManager;
+	private PrintWriter out;
 	
 	public VoteListener(int port,PollsManager manager) {
+		try {
+			out = new PrintWriter(new FileWriter("serverVoteListener.txt", true));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} 
+
 		pollsManager = PollsManager.getInstance(); 
 		try {
 			receiveSocket = new DatagramSocket(port);

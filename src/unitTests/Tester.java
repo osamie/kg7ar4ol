@@ -13,6 +13,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.List;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.*;
+
 import server.PollServer;
 
 
@@ -42,6 +47,8 @@ public class Tester {
 	public int numOfVoters = 0;
 	static PollsManager manager = PollsManager.getInstance();
 	static LocalPollsManager localManager = LocalPollsManager.getInstance();
+	static PrintWriter out;
+
 	
 	public static Object lock = new Object();
 	
@@ -51,11 +58,18 @@ public class Tester {
 	 */
 	public static void main(String[] args) {
 		try {
+			out = new PrintWriter(new FileWriter("testing.txt", true));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} 
+		try {
 			Tester window = new Tester();
 			window.open();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		out.close();
 	}
 
 	/**
@@ -172,13 +186,17 @@ public class Tester {
 		Button btnGetVoteData = new Button(shlTestingEnvironment, SWT.NONE);
 		btnGetVoteData.addSelectionListener(new SelectionAdapter() {
 			/*
-			 * Get Data Button
+			 * Get Data Button 
+			 * Gets the data from the poll indicated in the textbox.
+			 * Displays the number of votes for each option and the total votes on that poll
 			 */
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				int votes[] = new int[4];
 				int totalVotes;
 				boolean valid = true;
+				
+				// Validation of the pollID
 				try{
 					Long.parseLong(text_pollIDInfo.getText());
 					
@@ -186,7 +204,7 @@ public class Tester {
 				{
 					valid = false;
 				}
-				if(valid=true)
+				if(valid==true)
 				{
 					valid = false;
 					for(int i = 0; i<ADMINCAPACITY;i++)
@@ -200,8 +218,12 @@ public class Tester {
 						}
 					}
 				}
+				//End of validation of the pollID
+				
+				//Gets the vote count for each option and displays the information accordingly.
 				if(valid == true)
 				{
+					out.println(" ---------Getting information for poll: " + text_pollIDInfo.getText() + "-------------");
 					votes[0] = localManager.getVoteCount(Long.parseLong(text_pollIDInfo.getText()), 1);
 					System.out.println(votes[0]);
 					lblOption1.setText("Option 1: " + votes[0]);
@@ -220,6 +242,11 @@ public class Tester {
 					
 					totalVotes = votes[0]+votes[1]+votes[2]+votes[3];
 					lblTotVotes.setText(""+totalVotes);
+					out.println(System.nanoTime() + " - Option 1: "+ votes[0] + " Option 2: " + votes[1] +
+							" Option 3: "+ votes[2] + " Option 4: " + votes[3] );
+					out.println(System.nanoTime() + " - Total Votes: "+ totalVotes);
+					out.println("------------END INFO-------------");
+
 				}
 				else
 				{
@@ -236,7 +263,8 @@ public class Tester {
 		final List list_Admins = new List(shlTestingEnvironment, SWT.BORDER | SWT.V_SCROLL);
 		list_Admins.addSelectionListener(new SelectionAdapter() {
 			/*
-			 * Show Polls
+			 * Show Polls. Displays the polls for that admin once an admin has been 
+			 * selected in the admins list.
 			 */
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -264,41 +292,23 @@ public class Tester {
 		btnCreateAdmin.addSelectionListener(new SelectionAdapter() {
 			
 			/*
-			 *Creating Admin Button
+			 *Creating Admin Button.
+			 *Creates an admin and connects it to the server.
 			 */
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				boolean valid = true;
-				int counter = 0;
-				for( int i=0; i<text_IPAddress.getText().length(); i++ ) {
-					
-				    if(text_IPAddress.getText().charAt(i) == '.' ) {
-				        counter++;
-				    } 
-				    else	
-				    {
-				    	try{
-							Integer.parseInt(text_IPAddress.getText().substring(i,i+1));
-							
-						}catch(NumberFormatException e){
-							valid = false;
-						}
-				    }
-				}
+				boolean valid;
+				valid = validateIP(1);	//Validates IP Address
 				
-						
-				if(counter==3&& valid == true)
+				//Creates Admin.
+				if(valid == true)
 				{
 					admins[numOfAdmins] = new AdminClient(server.PollServer.ADMIN_PORT, text_IPAddress.getText());
 					numOfAdmins++;
 					list_Admins.add("Admin " + numOfAdmins);
-					
 				}
-				else
-				{
-					text_IPAddress.setText("Invalid IP Address");
-				}
+				
 			}
 		});
 		btnCreateAdmin.setBounds(343, 84, 156, 25);
@@ -307,12 +317,19 @@ public class Tester {
 		
 		Button btnCreatePoll = new Button(shlTestingEnvironment, SWT.NONE);
 		btnCreatePoll.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * Create a Poll Button
+			 * Creates a poll for the delected admin.
+			 */
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				long pollID;
+				//Validate admin selection
 				if(list_Admins.getSelectionIndex() != -1)
 				{
-					pollID = admins[list_Admins.getSelectionIndex()].createPoll("Test@test.com|Poll1|4|1|2|3|4");
+					pollID = admins[list_Admins.getSelectionIndex()].createPoll("Test@test.com|Poll1|4|1|2|3|4");//Create Poll
+					
+					//Add poll to the list of polls for that admin.
 					for(int i = 0; i < POLLCAPACITY;i++)
 					{
 						if(polls[list_Admins.getSelectionIndex()][i] == 0)
@@ -321,7 +338,9 @@ public class Tester {
 							i = POLLCAPACITY;
 						}
 					}
-					list_AdminPolls.removeAll();
+					list_AdminPolls.removeAll();	//Remove current display of polls.
+					
+					//Re-populate admin polls list display
 					for(int i = 0; i<POLLCAPACITY;i++)
 					{
 						if(polls[list_Admins.getSelectionIndex()][i] == 0)
@@ -346,33 +365,30 @@ public class Tester {
 			 */
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				boolean valid = true;
+				boolean valid;
 				int counter = 0;
 				long pollID;
 				Random generator = new Random();
 				
 				pollID = Long.parseLong(text_PollIDVote.getText());
-				for( int i=0; i<text_IPAddress.getText().length(); i++ ) {
-				    if(text_IPAddress.getText().charAt(i) == '.' ) {
-				        counter++;
-				    } 
-				    else{
-				    	try{
-							Integer.parseInt(text_IPAddress.getText().substring(i,i+1));	
-						}catch(NumberFormatException e){
-							valid = false;
-						}
-				    }
-				}		
-				if(counter==3&& valid == true)
-				{	
+				valid = validateIP(0);	//Validate IP address
+				
+				if(valid == true)
+				{		
+					out.println("-------------- Voting " + text_NumOfVotes.getText() +" times on poll " +
+							text_PollIDVote.getText() + " with concurrent votes = " + btnConcurrentVoting.getSelection() +
+								" and repeated votes = " + btnRepeatedVotes.getSelection() + " ---------------");
+					
+					//Concurrent voting
 					if(btnConcurrentVoting.getSelection()== true)
 					{
+						//Creates numberOfVotes threads which will be clients that will vote concurrently.
 						for(int i = 0;i<Integer.parseInt(text_NumOfVotes.getText());i++)
 						{
 							concurrVoters[i] = new voterClient(btnConcurrentVoting.getSelection(),btnRepeatedVotes.getSelection(),pollID );
 							concurrVoters[i].start();
 						}
+						//Wait a bit for all voters to become ready for voting.
 						try {
 							Thread.sleep(1000);
 						} catch (InterruptedException e) {
@@ -381,25 +397,33 @@ public class Tester {
 						}
 						synchronized(lock)
 						{
-							lock.notifyAll();
+							lock.notifyAll();	//Release all the voters to vote concurrently.
 						}
 					}
+					//Non-concurrent votes
 					else
 					{
+						out.println(System.nanoTime() + " ----- Non-concurrent votes -----");
 						int voteChoice;
 						for(int i = 0; i<Integer.parseInt(text_NumOfVotes.getText());i++)
 						{
-							voteChoice = generator.nextInt(4)+1;
-							voters[i] = new Client(PollServer.VOTING_PORT);
-							voters[i].vote(pollID, voteChoice);
+							voteChoice = generator.nextInt(4)+1;//Generate random choice number
+							
+							voters[i] = new Client(PollServer.VOTING_PORT);	//Create Client
+							out.println(System.nanoTime() + " - voter " + i + " voting for choice " + voteChoice + 
+									" on poll " + pollID);
+							voters[i].vote(pollID, voteChoice);	//Vote
 						}
-						voteChoice = generator.nextInt(4)+1;
 						
+						//Non Concurrent repeated votes
 						if(btnRepeatedVotes.getSelection() == true)
 						{
+							out.println(System.nanoTime() + " ----- Non-concurrent repeated votes -----");
 							for(int i = 0; i<Integer.parseInt(text_NumOfVotes.getText());i++)
 							{
-								voteChoice = generator.nextInt(3)+1;
+								voteChoice = generator.nextInt(4)+1;
+								out.println(System.nanoTime() + " - voter " + i + " repeated vote for choice " + voteChoice + 
+										" on poll " + pollID);
 								voters[i].vote(pollID, voteChoice);
 							}
 						}
@@ -410,14 +434,78 @@ public class Tester {
 		});
 		btnVote.setBounds(10, 70, 75, 25);
 		btnVote.setText("Vote");
+		
+	}
+	/**
+	 * Checks to see if the IP address is valid and it will ping the address to see if 
+	 * you can connect to that address.
+	 * parameters: int voteOrAdmin - 0 = voting, 1 = admin
+	 */
+	public boolean validateIP(int voteOrAdmin)
+	{
+		boolean valid = true;
+		int counter=0;
+		for( int i=0; i<text_IPAddress.getText().length(); i++ ) {
+		    if(text_IPAddress.getText().charAt(i) == '.' ) {
+		        counter++;
+		    } 
+		    else{
+		    	try{
+					Integer.parseInt(text_IPAddress.getText().substring(i,i+1));	
+				}catch(NumberFormatException e){
+					valid = false;
+					text_IPAddress.setText("Invalid IP Address");
+				}
+		    }
+		}
+		if(counter!=3)
+		{
+			valid = false;
+			text_IPAddress.setText("Invalid IP Address");
+		}
+		if(valid== true)
+		{
+			try {
+				InetAddress address = InetAddress.getByName(text_IPAddress.getText());
+				if(voteOrAdmin == 0)
+				{
+					valid = address.isReachable(PollServer.VOTING_PORT);	//Ping voting port and IP Address
+				}
+				else if(voteOrAdmin == 1)
+				{
+					valid = address.isReachable(PollServer.ADMIN_PORT);	//Ping admin port and IP address
+
+				}
+				if(valid == false)
+				{
+					text_IPAddress.setText("Cannot connect to server.");
+
+				}
+			} catch (UnknownHostException e) {
+				text_IPAddress.setText("Incorrect Address.");
+				valid = false;
+				e.printStackTrace();
+			} catch (IOException e) {
+				text_IPAddress.setText("Incorrect Address.");
+				e.printStackTrace();
+				valid = false;
+			}
+		}
+		System.out.println(valid);
+		return valid;
 	}
 }
+/*
+ * Client threads for concurrent voting testing. Voter clients will wait on a lock object.
+ * The testing environment will then notify all the concurrent threads and they will then vote.
+ */
 class voterClient extends Thread
 {
 	boolean concurr, repeat;
 	long PollID;
 	Random generator = new Random();
 	Client vote;
+	
 	voterClient( boolean concurrent, boolean repeated, long pollID)
 	{
 		PollID = pollID;
@@ -427,19 +515,19 @@ class voterClient extends Thread
 	}
 	public void run()
 	{
-		int voteChoice = generator.nextInt(4) + 1;
+		int voteChoice = generator.nextInt(4) + 1;//Randomly generate a vote choice
 
 		try {
 			synchronized(Tester.lock)
 			{
-				Tester.lock.wait();
+				Tester.lock.wait();//Wait on lock.
 			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		vote.vote(PollID, voteChoice);
-
+		vote.vote(PollID, voteChoice);	//vote
+		//Repeated concurrent votes
 		if(repeat == true)
 		{
 			voteChoice = generator.nextInt(4) + 1;

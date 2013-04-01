@@ -579,6 +579,7 @@ class voterClient extends Thread
 			voteChoice = generator.nextInt(4) + 1;
 			vote.vote(PollID, voteChoice);
 		}
+		vote.close();
 
 	}
 }

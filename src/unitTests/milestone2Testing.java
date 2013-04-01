@@ -13,9 +13,7 @@ import java.util.Scanner;
 import model.Poll;
 import model.PollsManager;
 
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -26,7 +24,6 @@ import adminGUI.AdminGUI;
 
 public class milestone2Testing {
 
-	private int polls[] = new int[10];
 	int numOfPolls;
 	static PollServer server = new PollServer();
 	
@@ -324,7 +321,6 @@ public class milestone2Testing {
 		Client testClient8 = new Client(PollServer.VOTING_PORT,"127.0.0.1");
 		Client testClient9 = new Client(PollServer.VOTING_PORT,"127.0.0.1");
 		Client testClient10 = new Client(PollServer.VOTING_PORT,"127.0.0.1");
-		AdminGUI testAdminGUI = new AdminGUI("127.0.0.1");
 		
 		Scanner userInput = new Scanner(System.in);
 		String input;
@@ -360,7 +356,7 @@ public class milestone2Testing {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
+		userInput.close();
 		return false;
 	}
 	

@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import model.LocalPollsManager;
-
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
@@ -23,30 +21,20 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.custom.TableCursor;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Slider;
-
 import server.PollServer;
 import voterGUI.VoterGUI;
-import client.AdminClient;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.widgets.Group;
 
 
 public class ClientStartUp extends ApplicationWindow {
 	
-	private String[][] pollInfo;
-	private int pollInfoLength;
+//	private String[][] pollInfo;
+//	private int pollInfoLength;
 //	private static AdminClient admin;
 	private int maxOptions = 10;
 	private Text text_IPAddress;
@@ -59,8 +47,8 @@ public class ClientStartUp extends ApplicationWindow {
 		addToolBar(SWT.FLAT | SWT.WRAP);
 		//addMenuBar();
 		//addStatusLine();
-		pollInfoLength = 25;
-		pollInfo = new String[pollInfoLength][3];		
+//		pollInfoLength = 25;
+//		pollInfo = new String[pollInfoLength][3];		
 	}
 
 	
@@ -253,10 +241,10 @@ public class ClientStartUp extends ApplicationWindow {
 	 */
 	public static void main(String args[]) {
 		
-		int port = PollServer.ADMIN_PORT;		//Default port
+//		int port = PollServer.ADMIN_PORT;		//Default port
 		if (args.length > 0) {
 		    try {
-		        port = Integer.parseInt(args[0]);
+//		        port = Integer.parseInt(args[0]);
 		    } catch (NumberFormatException e) {
 		        System.err.println("Argument" + " must be an integer");
 		        System.exit(1);

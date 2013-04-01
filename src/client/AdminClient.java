@@ -22,9 +22,6 @@ public class AdminClient {
 	Socket adminSocket;private BufferedReader in;
 	private PrintWriter outToServer;
 	BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-	private int numOfPolls;
-	private int polls[] = new int[10];
-	private long adminID = 0;
 	private MessageListener messageReciever;
 	private String IPAddress = "127.0.0.1";
 
@@ -35,7 +32,6 @@ public class AdminClient {
 	public AdminClient(int portNum, String IP)
 	{		
 		IPAddress = IP;
-		numOfPolls = 0;
 		try {
 			// Bind a socket to any available port on the local host machine. 
 			adminSocket = new Socket(IPAddress, portNum);
@@ -73,7 +69,6 @@ public class AdminClient {
 		 * Connection is already being done in the constructor 
 		 */
 		String msgToSend = "->" + message;
-		String temp = "";
 		try {
 			block_sem.acquire();	//Acquires before sending.
 		} catch (InterruptedException e1) {

@@ -21,12 +21,7 @@ class VoteListener extends Thread {
 	private PrintWriter out;
 	
 	public VoteListener(int port,PollsManager manager) {
-		try {
-			out = new PrintWriter(new FileWriter("serverVoteListener.txt", true));
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} 
+		
 
 		pollsManager = PollsManager.getInstance(); 
 		try {
@@ -42,13 +37,19 @@ class VoteListener extends Thread {
 	 */
 	public void listen(){
 		byte[]data;
+		String msg;
 		System.out.println("Listening for Voters...");
 		while (receiveSocket.isBound()){
 			data = new byte[100];
 			receivePacket = new DatagramPacket(data, data.length);
 			try {
 				receiveSocket.receive(receivePacket);
+				msg = System.nanoTime() + " - Received datagram packet from " + String.valueOf(receivePacket.getSocketAddress());
 				new VotesHandler(receivePacket,pollsManager).start(); //handle the vote
+				out = new PrintWriter(new FileWriter("serverVoteListener.txt", true));
+				out.println(msg);
+				out.close();
+				
 			} catch (IOException e) {
 				System.out.println("IOexception receiving packet" + e.getMessage());
 				continue;
@@ -60,6 +61,7 @@ class VoteListener extends Thread {
 	@Override
 	public void run() {
 		listen();
+		
 	}
 	
 	/**

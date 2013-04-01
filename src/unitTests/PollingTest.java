@@ -11,7 +11,6 @@ import client.AdminClient;
 import client.Client;
 
 public class PollingTest {
-	private int polls[] = new int[10];
 	int numOfPolls;
 	
 	@Before
@@ -60,7 +59,6 @@ public class PollingTest {
 	public boolean multiplePolls(int numberOfPolls)
 	{
 		Boolean testResult = true;
-		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT,"127.0.0.1");
 		Client testClient = new Client(PollServer.VOTING_PORT,"127.0.0.1");
 		long pollIds[] = new long[numberOfPolls];
 		

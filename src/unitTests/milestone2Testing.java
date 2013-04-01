@@ -146,7 +146,7 @@ public class milestone2Testing {
 	private boolean invalidVotesTest() {
 		
 		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT,"127.0.0.1");
-		Client testClient = new Client(PollServer.VOTING_PORT);
+		Client testClient = new Client(PollServer.VOTING_PORT,"127.0.0.1");
 		long pollID = admin.createPoll("TEST@TEST.com|Invalid Votes|2|Yes|No");
 		PollsManager manager = PollsManager.getInstance();
 		
@@ -199,7 +199,7 @@ public class milestone2Testing {
 	private boolean lateVotesTest() {
 		
 		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT,"127.0.0.1");
-		Client testClient = new Client(PollServer.VOTING_PORT);
+		Client testClient = new Client(PollServer.VOTING_PORT,"127.0.0.1");
 		long pollID = admin.createPoll("TEST@TEST.com|Poll ID|2|Yes|No");
 		PollsManager manager = PollsManager.getInstance();
 		
@@ -277,7 +277,7 @@ public class milestone2Testing {
 	
 	public boolean repeatedVotesTest(int numberOfVotes)
 	{
-		Client testClient = new Client(PollServer.VOTING_PORT);
+		Client testClient = new Client(PollServer.VOTING_PORT,"127.0.0.1");
 		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT,"127.0.0.1");
 		long pollID = admin.createPoll("gasg@gsag.com|who are you|2|yes|no");
 		PollsManager manager = PollsManager.getInstance();
@@ -314,17 +314,17 @@ public class milestone2Testing {
 	
 	private boolean realTimeTest() {
 		
-		Client testClient1 = new Client(PollServer.VOTING_PORT);
-		Client testClient2= new Client(PollServer.VOTING_PORT);
-		Client testClient3 = new Client(PollServer.VOTING_PORT);
-		Client testClient4 = new Client(PollServer.VOTING_PORT);
-		Client testClient5 = new Client(PollServer.VOTING_PORT);
-		Client testClient6 = new Client(PollServer.VOTING_PORT);
-		Client testClient7 = new Client(PollServer.VOTING_PORT);
-		Client testClient8 = new Client(PollServer.VOTING_PORT);
-		Client testClient9 = new Client(PollServer.VOTING_PORT);
-		Client testClient10 = new Client(PollServer.VOTING_PORT);
-		AdminGUI testAdminGUI = new AdminGUI();
+		Client testClient1 = new Client(PollServer.VOTING_PORT,"127.0.0.1");
+		Client testClient2= new Client(PollServer.VOTING_PORT,"127.0.0.1");
+		Client testClient3 = new Client(PollServer.VOTING_PORT,"127.0.0.1");
+		Client testClient4 = new Client(PollServer.VOTING_PORT,"127.0.0.1");
+		Client testClient5 = new Client(PollServer.VOTING_PORT,"127.0.0.1");
+		Client testClient6 = new Client(PollServer.VOTING_PORT,"127.0.0.1");
+		Client testClient7 = new Client(PollServer.VOTING_PORT,"127.0.0.1");
+		Client testClient8 = new Client(PollServer.VOTING_PORT,"127.0.0.1");
+		Client testClient9 = new Client(PollServer.VOTING_PORT,"127.0.0.1");
+		Client testClient10 = new Client(PollServer.VOTING_PORT,"127.0.0.1");
+		AdminGUI testAdminGUI = new AdminGUI("127.0.0.1");
 		
 		Scanner userInput = new Scanner(System.in);
 		String input;

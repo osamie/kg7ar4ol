@@ -7,6 +7,10 @@
  */
 package adminGUI;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import model.LocalPollsManager;
 
 import org.eclipse.jface.action.MenuManager;
@@ -45,6 +49,7 @@ public class ClientStartUp extends ApplicationWindow {
 	private int pollInfoLength;
 //	private static AdminClient admin;
 	private int maxOptions = 10;
+	private Text text_IPAddress;
 	/**
 	 * Create the application window.
 	 */
@@ -83,13 +88,18 @@ public class ClientStartUp extends ApplicationWindow {
 			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				boolean valid;
+				valid = validateIP(0);
+				if(valid==true)
+				{
 				voterClient_btn.setEnabled(false);
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run(){
-						new VoterGUI();
+						new VoterGUI(text_IPAddress.getText());
 					}
 				});
 				voterClient_btn.setEnabled(true);
+				}
 			}
 		});
 		voterClient_btn.setBounds(56, 104, 139, 25);
@@ -102,13 +112,20 @@ public class ClientStartUp extends ApplicationWindow {
 			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				adminClient_btn.setEnabled(false);
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run(){
-						new AdminGUI();
-					}
+				boolean valid;
+				valid = validateIP(1);
+				if(valid == true)
+				{
+					adminClient_btn.setEnabled(false);
+					Display.getDefault().asyncExec(new Runnable() {
+						public void run(){
+							new AdminGUI(text_IPAddress.getText());
+						}
+				
 				});
+				
 				adminClient_btn.setEnabled(true);
+				}
 			}
 		});
 		adminClient_btn.setBounds(56, 52, 139, 28);
@@ -120,6 +137,18 @@ public class ClientStartUp extends ApplicationWindow {
 		lblPollClients.setFont(SWTResourceManager.getFont("Segoe Print", 13, SWT.BOLD));
 		lblPollClients.setBounds(79, 10, 93, 36);
 		lblPollClients.setText("LAUNCH:");
+		
+		text_IPAddress = new Text(container, SWT.BORDER);
+		text_IPAddress.setText("127.0.0.1");
+		text_IPAddress.setBounds(56, 162, 139, 21);
+		
+		Label lblIpAddress = new Label(container, SWT.NONE);
+		lblIpAddress.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		lblIpAddress.setBackground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+		lblIpAddress.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NORMAL));
+		lblIpAddress.setAlignment(SWT.CENTER);
+		lblIpAddress.setBounds(56, 135, 139, 21);
+		lblIpAddress.setText("IP Address");
 
 		return container;
 	}
@@ -160,7 +189,64 @@ public class ClientStartUp extends ApplicationWindow {
 		StatusLineManager statusLineManager = new StatusLineManager();
 		return statusLineManager;
 	}
+	/**
+	 * Checks to see if the IP address is valid and it will ping the address to see if 
+	 * you can connect to that address.
+	 * @param int voteOrAdmin - 0 = voting, 1 = admin
+	 */
+	public boolean validateIP(int voteOrAdmin)
+	{
+		boolean valid = true;
+		int counter=0;
+		for( int i=0; i<text_IPAddress.getText().length(); i++ ) {
+		    if(text_IPAddress.getText().charAt(i) == '.' ) {
+		        counter++;
+		    } 
+		    else{
+		    	try{
+					Integer.parseInt(text_IPAddress.getText().substring(i,i+1));	
+				}catch(NumberFormatException e){
+					valid = false;
+					text_IPAddress.setText("Invalid IP Address");
+				}
+		    }
+		}
+		if(counter!=3)
+		{
+			valid = false;
+			text_IPAddress.setText("Invalid IP Address");
+		}
+		if(valid== true)
+		{
+			try {
+				InetAddress address = InetAddress.getByName(text_IPAddress.getText());
+				if(voteOrAdmin == 0)
+				{
+					valid = address.isReachable(PollServer.VOTING_PORT);	//Ping voting port and IP Address
+				}
+				else if(voteOrAdmin == 1)
+				{
+					valid = address.isReachable(PollServer.ADMIN_PORT);	//Ping admin port and IP address
 
+				}
+				if(valid == false)
+				{
+					text_IPAddress.setText("Cannot connect to server.");
+
+				}
+			} catch (UnknownHostException e) {
+				text_IPAddress.setText("Incorrect Address.");
+				valid = false;
+				e.printStackTrace();
+			} catch (IOException e) {
+				text_IPAddress.setText("Incorrect Address.");
+				e.printStackTrace();
+				valid = false;
+			}
+		}
+
+		return valid;
+	}
 	/**
 	 * Launch the application.
 	 * @param args
@@ -205,6 +291,6 @@ public class ClientStartUp extends ApplicationWindow {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(267, 226);
+		return new Point(270, 263);
 	}
 }

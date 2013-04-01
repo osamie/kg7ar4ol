@@ -49,7 +49,7 @@ public class AdminGUI extends ApplicationWindow {
 	/**
 	 * Create the application window.
 	 */
-	public AdminGUI() {
+	public AdminGUI(String IPAddress) {
 		super(null);
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
@@ -59,7 +59,7 @@ public class AdminGUI extends ApplicationWindow {
 		pollInfo = new String[pollInfoLength][3];
 		
 		//Creates the instance of an AdminClient with the port sent in either from command line argument or the default port.
-		admin = new AdminClient(PollServer.ADMIN_PORT, "127.0.0.1");
+		admin = new AdminClient(PollServer.ADMIN_PORT, IPAddress);
 		try {
 			setBlockOnOpen(true);
 			open();
@@ -536,7 +536,7 @@ public class AdminGUI extends ApplicationWindow {
 		//Creates the instance of an AdminClient with the port sent in either from command line argument or the default port.
 		admin = new AdminClient(port, "127.0.0.1");
 		try {
-			AdminGUI window = new AdminGUI();
+			AdminGUI window = new AdminGUI("127.0.0.1");
 			window.setBlockOnOpen(true);
 			window.open();
 			Display.getCurrent().dispose();
@@ -552,7 +552,7 @@ public class AdminGUI extends ApplicationWindow {
 	 */
 	public static void main(String args[]) {
 //		init(args);
-		new AdminGUI();
+		new AdminGUI("127.0.0.1");
 	}
 
 	/**

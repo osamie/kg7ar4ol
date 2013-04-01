@@ -16,9 +16,10 @@ public class Client {
 	DatagramPacket sendPacket, receivePacket;
 	DatagramSocket sendReceiveSocket;
 	private static int portNum;
+	private String IPAddress;
 	   
-	public Client(int port){
-		
+	public Client(int port,String IP){
+		IPAddress = IP;
 		portNum = port;
 		try {
 	         // Bind a Datagram socket to any available port on the local host machine. 
@@ -37,7 +38,7 @@ public class Client {
 	         String message = pollID + " " + choice;
 	         
 	         byte msg[] = message.getBytes();
-	    	 sendPacket = new DatagramPacket(msg, msg.length, InetAddress.getLocalHost(), portNum);
+	    	 sendPacket = new DatagramPacket(msg, msg.length, InetAddress.getByName(IPAddress), portNum);
 	         sendReceiveSocket.send(sendPacket);         
 	     }
 	     catch (UnknownHostException e1)  { e1.printStackTrace(); System.exit(1); }
@@ -73,7 +74,7 @@ public class Client {
 		        System.exit(1);
 		    }
 		}
-		Client client = new Client(portNum);
+		Client client = new Client(portNum, "127.0.0.1");
 		
 		while(client.sendReceiveSocket.isBound()){
 			System.out.print("\nSend vote(Format:<pollID> <optionNumber> ): ");

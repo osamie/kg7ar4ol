@@ -29,7 +29,7 @@ public class VoterGUI extends ApplicationWindow {
 	/**
 	 * Create the application window.
 	 */
-	public VoterGUI() {
+	public VoterGUI(String IP) {
 		super(null);
 		createActions();
 		addToolBar(SWT.FLAT | SWT.WRAP);
@@ -37,7 +37,7 @@ public class VoterGUI extends ApplicationWindow {
 		addStatusLine();
 		
 		int portNum = PollServer.VOTING_PORT;	
-		voter = new client.Client(portNum);
+		voter = new client.Client(portNum,IP);
 		try {
 			this.setBlockOnOpen(true);
 			this.open();
@@ -160,7 +160,7 @@ public class VoterGUI extends ApplicationWindow {
 	 * @param args
 	 */
 	public static void main(String args[]) {
-		new VoterGUI();
+		new VoterGUI("127.0.0.1");
 	}
 
 	/**

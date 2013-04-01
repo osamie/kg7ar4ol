@@ -61,7 +61,7 @@ public class PollingTest {
 	{
 		Boolean testResult = true;
 		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT,"127.0.0.1");
-		Client testClient = new Client(PollServer.VOTING_PORT);
+		Client testClient = new Client(PollServer.VOTING_PORT,"127.0.0.1");
 		long pollIds[] = new long[numberOfPolls];
 		
 		//Creates polls and verifies if the polls created pollIds
@@ -127,7 +127,7 @@ public class PollingTest {
 		Client []clients = new Client[numberOfVoters];
 		for(int i = 0; i < numberOfVoters; i++)
 		{
-			clients[i] = new Client(PollServer.VOTING_PORT);
+			clients[i] = new Client(PollServer.VOTING_PORT,"127.0.0.1");
 		}
 		
 		return testResult;
@@ -143,7 +143,7 @@ public class PollingTest {
 	{
 		
 		Boolean testResult = true;
-		Client testClient = new Client(PollServer.VOTING_PORT);
+		Client testClient = new Client(PollServer.VOTING_PORT,"127.0.0.1");
 		
 		for(int i = 0; i <numberOfVotes; i++)
 		{		

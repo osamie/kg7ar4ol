@@ -70,11 +70,11 @@ public class Milestone3Testing {
 	{
 		out.println(System.nanoTime() + " -------------Mass Votes Test--------- Voting " + numberOfVotes + " times on one poll.");
 		boolean returnVal;
-		int numVotes = numberOfVotes;
+		
 		long pollID;
 		int votes[] = new int[10];
 		
-		client.AdminClient admin = new client.AdminClient(server.ADMIN_PORT,"127.0.0.1");
+		client.AdminClient admin = new client.AdminClient(PollServer.ADMIN_PORT,"127.0.0.1");
 		client.Client voters[] = new client.Client[numberOfVotes];
 		
 		pollID = admin.createPoll("test@test.com|Testing Question|2|Yes|No");
@@ -84,7 +84,7 @@ public class Milestone3Testing {
 		
 		for(int i = 0; i < numberOfVotes; i++)
 		{
-			voters[i] = new client.Client(server.VOTING_PORT);
+			voters[i] = new client.Client(PollServer.VOTING_PORT,"127.0.0.1");
 			voters[i].vote(pollID,1);
 			voters[i].close();
 		}
@@ -123,7 +123,7 @@ public class Milestone3Testing {
 	public boolean massPolls(int numberOfPolls)
 	{
 		out.println(System.nanoTime() + " -------------Mass Polls Test---------Creating " + numberOfPolls + " for one admin.");
-		AdminClient admin = new AdminClient(server.ADMIN_PORT,"127.0.0.1");
+		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT,"127.0.0.1");
 		long pollID;
 		int numOfCreatedPolls = 0;
 		out.println(System.nanoTime() + " - Starting creating polls");
@@ -159,7 +159,7 @@ public class Milestone3Testing {
 		
 		for(int i = 0;i<numberOfAdmins;i++)
 		{
-			admins[i] = new AdminClient(server.ADMIN_PORT,"127.0.0.1");
+			admins[i] = new AdminClient(PollServer.ADMIN_PORT,"127.0.0.1");
 			
 		}
 		out.println(System.nanoTime() + " - Finished creating Admins, Verifying");
@@ -190,7 +190,7 @@ public class Milestone3Testing {
 		long pollID;
 		int votes[] = new int[10];
 		voter voting[] = new voter[numberOfVotes];
-		AdminClient admin = new AdminClient(server.ADMIN_PORT,"127.0.0.1");
+		AdminClient admin = new AdminClient(PollServer.ADMIN_PORT,"127.0.0.1");
 		
 		pollID = admin.createPoll("test@test.com|poll|2|yes|no");
 		
@@ -236,7 +236,7 @@ class voter extends Thread
 	voter(Milestone3Testing global, long pollID)
 	{
 		this.global = global;
-		voter = new Client(global.server.VOTING_PORT);
+		voter = new Client(PollServer.VOTING_PORT,"127.0.0.1");
 		this.pollID = pollID;
 	}
 	

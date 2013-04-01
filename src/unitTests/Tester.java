@@ -385,7 +385,7 @@ public class Tester {
 						//Creates numberOfVotes threads which will be clients that will vote concurrently.
 						for(int i = 0;i<Integer.parseInt(text_NumOfVotes.getText());i++)
 						{
-							concurrVoters[i] = new voterClient(btnConcurrentVoting.getSelection(),btnRepeatedVotes.getSelection(),pollID );
+							concurrVoters[i] = new voterClient(btnConcurrentVoting.getSelection(),btnRepeatedVotes.getSelection(),pollID,text_IPAddress.getText());
 							concurrVoters[i].start();
 						}
 						//Wait a bit for all voters to become ready for voting.
@@ -409,7 +409,7 @@ public class Tester {
 						{
 							voteChoice = generator.nextInt(4)+1;//Generate random choice number
 							
-							voters[i] = new Client(PollServer.VOTING_PORT);	//Create Client
+							voters[i] = new Client(PollServer.VOTING_PORT,text_IPAddress.getText());	//Create Client
 							out.println(System.nanoTime() + " - voter " + i + " voting for choice " + voteChoice + 
 									" on poll " + pollID);
 							voters[i].vote(pollID, voteChoice);	//Vote
@@ -506,12 +506,12 @@ class voterClient extends Thread
 	Random generator = new Random();
 	Client vote;
 	
-	voterClient( boolean concurrent, boolean repeated, long pollID)
+	voterClient( boolean concurrent, boolean repeated, long pollID, String IP)
 	{
 		PollID = pollID;
 		concurr = concurrent;
 		repeat = repeated;
-		vote = new Client(PollServer.VOTING_PORT);
+		vote = new Client(PollServer.VOTING_PORT,IP);
 	}
 	public void run()
 	{

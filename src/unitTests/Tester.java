@@ -113,11 +113,11 @@ public class Tester {
 		
 		text_IPAddress = new Text(shlTestingEnvironment, SWT.BORDER);
 		text_IPAddress.setText("127.0.0.1");
-		text_IPAddress.setBounds(182, 31, 120, 24);
+		text_IPAddress.setBounds(159, 31, 120, 24);
 		
 		Label lblIpAddress = new Label(shlTestingEnvironment, SWT.NONE);
 		lblIpAddress.setAlignment(SWT.CENTER);
-		lblIpAddress.setBounds(182, 10, 120, 15);
+		lblIpAddress.setBounds(159, 10, 120, 15);
 		lblIpAddress.setText("IP Address Of Server");
 		
 		Group grpVoting = new Group(shlTestingEnvironment, SWT.NONE);
@@ -128,14 +128,14 @@ public class Tester {
 		text_PollIDVote.setBounds(10, 43, 76, 21);
 		
 		final Label lblResponse = new Label(shlTestingEnvironment, SWT.NONE);
-		lblResponse.setBounds(308, 31, 191, 15);
-		lblResponse.setText("Time To Create Admin:");
+		lblResponse.setBounds(285, 34, 214, 15);
 		
 				
 		text_NumOfVotes = new Text(grpVoting, SWT.BORDER);
 		text_NumOfVotes.setBounds(101, 43, 76, 21);
 		
 		final Button btnRepeatedVotes = new Button(grpVoting, SWT.CHECK);
+		btnRepeatedVotes.setEnabled(false);
 		btnRepeatedVotes.setBounds(102, 70, 102, 16);
 		btnRepeatedVotes.setText("Repeated Votes");
 		
@@ -390,7 +390,7 @@ public class Tester {
 							voters[i].vote(pollID, voteChoice);	//Vote
 						}
 						
-						//Non Concurrent repeated votes
+
 						if(btnRepeatedVotes.getSelection() == true)
 						{
 							out.println(System.nanoTime() + " ----- Non-concurrent repeated votes -----");
@@ -419,13 +419,7 @@ public class Tester {
 			}
 		});
 		btnVote.setBounds(10, 70, 75, 25);
-		btnVote.setText("Vote");
-		
-		
-		
-		
-		
-		
+		btnVote.setText("Vote");	
 		
 	}
 	/**

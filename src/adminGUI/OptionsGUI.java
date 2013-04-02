@@ -5,9 +5,6 @@
 
 package adminGUI;
 
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -86,7 +83,6 @@ public class OptionsGUI extends ApplicationWindow {
 				//Constructs the options to be Option1|Option2|Option3|etc...
 				for(int i = 0;i<numOptions;i++)
 				{
-					String temp = options[i].getText();
 					//Checks if any of the options are blank.
 					if(options[i].getText().equals("") == true)
 					{

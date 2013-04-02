@@ -26,6 +26,12 @@ import client.AdminClient;
 import client.Client;
 import model.*;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.DateTime;
 
 public class Tester {
 
@@ -36,9 +42,14 @@ public class Tester {
 	private Text text_PollIDVote;
 	private Text text_NumOfVotes;
 	private Text text_pollIDInfo;
+	private Label lblOption1;
+	private Label lblOption2;
+	private Label lblOption3;
+	private Label lblOption4;
+	private Label lblTotVotes;
 	public int ADMINCAPACITY = 100;
 	public int CLIENTCAPACITY = 10000;
-	public int POLLCAPACITY = 10;
+	public int POLLCAPACITY = 100;
 	public AdminClient admins[] = new AdminClient[ADMINCAPACITY];
 	public Client voters[] = new Client[CLIENTCAPACITY];
 	public voterClient concurrVoters[] = new voterClient[CLIENTCAPACITY];
@@ -102,11 +113,11 @@ public class Tester {
 		
 		text_IPAddress = new Text(shlTestingEnvironment, SWT.BORDER);
 		text_IPAddress.setText("127.0.0.1");
-		text_IPAddress.setBounds(182, 31, 120, 24);
+		text_IPAddress.setBounds(159, 31, 120, 24);
 		
 		Label lblIpAddress = new Label(shlTestingEnvironment, SWT.NONE);
 		lblIpAddress.setAlignment(SWT.CENTER);
-		lblIpAddress.setBounds(182, 10, 120, 15);
+		lblIpAddress.setBounds(159, 10, 120, 15);
 		lblIpAddress.setText("IP Address Of Server");
 		
 		Group grpVoting = new Group(shlTestingEnvironment, SWT.NONE);
@@ -116,12 +127,15 @@ public class Tester {
 		text_PollIDVote = new Text(grpVoting, SWT.BORDER);
 		text_PollIDVote.setBounds(10, 43, 76, 21);
 		
+		final Label lblResponse = new Label(shlTestingEnvironment, SWT.NONE);
+		lblResponse.setBounds(285, 34, 214, 15);
 		
-		
+				
 		text_NumOfVotes = new Text(grpVoting, SWT.BORDER);
 		text_NumOfVotes.setBounds(101, 43, 76, 21);
 		
 		final Button btnRepeatedVotes = new Button(grpVoting, SWT.CHECK);
+		btnRepeatedVotes.setEnabled(false);
 		btnRepeatedVotes.setBounds(102, 70, 102, 16);
 		btnRepeatedVotes.setText("Repeated Votes");
 		
@@ -137,6 +151,40 @@ public class Tester {
 		btnConcurrentVoting.setBounds(101, 96, 120, 16);
 		btnConcurrentVoting.setText("Concurrent Voting");
 
+		Group grpData = new Group(shlTestingEnvironment, SWT.NONE);
+		grpData.setBounds(10, 120, 237, 104);
+		grpData.setText("Data");
+		
+		lblOption1 = new Label(grpData, SWT.NONE);
+		lblOption1.setBounds(10, 22, 120, 15);
+		lblOption1.setText("Option 1:");
+		
+		lblOption3 = new Label(grpData, SWT.NONE);
+		lblOption3.setBounds(10, 64, 120, 15);
+		lblOption3.setText("Option 3:");
+		
+		lblOption4 = new Label(grpData, SWT.NONE);
+		lblOption4.setBounds(10, 86, 120, 15);
+		lblOption4.setText("Option 4:");
+		
+		lblOption2 = new Label(grpData, SWT.NONE);
+		lblOption2.setBounds(10, 43, 120, 15);
+		lblOption2.setText("Option 2:");
+		
+		Label lblTotalVotes = new Label(grpData, SWT.NONE);
+		lblTotalVotes.setBounds(136, 22, 64, 15);
+		lblTotalVotes.setText("Total Votes");
+		
+		lblTotVotes = new Label(grpData, SWT.NONE);
+		lblTotVotes.setBounds(136, 43, 55, 15);
+		
+		Label lblDropRate = new Label(grpData, SWT.NONE);
+		lblDropRate.setBounds(136, 64, 55, 15);
+		lblDropRate.setText("Drop Rate");
+		
+		final Label lblDrop = new Label(grpData, SWT.NONE);
+		lblDrop.setBounds(136, 86, 55, 15);
+		
 		final List list_AdminPolls = new List(shlTestingEnvironment, SWT.BORDER | SWT.V_SCROLL);
 		list_AdminPolls.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -156,33 +204,6 @@ public class Tester {
 		lblPolls.setBounds(343, 122, 55, 15);
 		lblPolls.setText("Polls");
 		
-		Group grpData = new Group(shlTestingEnvironment, SWT.NONE);
-		grpData.setText("Data");
-		grpData.setBounds(10, 115, 245, 109);
-		
-		final Label lblOption1 = new Label(grpData, SWT.NONE);
-		lblOption1.setBounds(10, 22, 120, 15);
-		lblOption1.setText("Option 1:");
-		
-		final Label lblOption3 = new Label(grpData, SWT.NONE);
-		lblOption3.setBounds(10, 64, 120, 15);
-		lblOption3.setText("Option 3:\r\n");
-		
-		final Label lblOption4 = new Label(grpData, SWT.NONE);
-		lblOption4.setBounds(10, 86, 120, 15);
-		lblOption4.setText("Option 4:");
-		
-		final Label lblOption2 = new Label(grpData, SWT.NONE);
-		lblOption2.setBounds(10, 43, 120, 15);
-		lblOption2.setText("Option 2:");
-		
-		Label lblTotalVotes = new Label(grpData, SWT.NONE);
-		lblTotalVotes.setBounds(136, 22, 64, 15);
-		lblTotalVotes.setText("Total Votes");
-		
-		final Label lblTotVotes = new Label(grpData, SWT.NONE);
-		lblTotVotes.setBounds(136, 43, 55, 15);
-		
 		Button btnGetVoteData = new Button(shlTestingEnvironment, SWT.NONE);
 		btnGetVoteData.addSelectionListener(new SelectionAdapter() {
 			/*
@@ -192,67 +213,7 @@ public class Tester {
 			 */
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				int votes[] = new int[4];
-				int totalVotes;
-				boolean valid = true;
-				
-				// Validation of the pollID
-				try{
-					Long.parseLong(text_pollIDInfo.getText());
-					
-				}catch(NumberFormatException e)
-				{
-					valid = false;
-				}
-				if(valid==true)
-				{
-					valid = false;
-					for(int i = 0; i<ADMINCAPACITY;i++)
-					{
-						for(int b= 0; b<POLLCAPACITY;b++)
-						{
-							if(polls[i][b] == Long.parseLong(text_pollIDInfo.getText()))
-							{
-								valid = true;
-							}
-						}
-					}
-				}
-				//End of validation of the pollID
-				
-				//Gets the vote count for each option and displays the information accordingly.
-				if(valid == true)
-				{
-					out.println(" ---------Getting information for poll: " + text_pollIDInfo.getText() + "-------------");
-					votes[0] = localManager.getVoteCount(Long.parseLong(text_pollIDInfo.getText()), 1);
-					System.out.println(votes[0]);
-					lblOption1.setText("Option 1: " + votes[0]);
-					
-					votes[1] = localManager.getVoteCount(Long.parseLong(text_pollIDInfo.getText()), 2);
-					System.out.println(votes[0]);
-					lblOption2.setText("Option 2: " + votes[1]);
-					
-					votes[2] = localManager.getVoteCount(Long.parseLong(text_pollIDInfo.getText()), 3);
-					System.out.println(votes[0]);
-					lblOption3.setText("Option 3: " + votes[2]);
-					
-					votes[3] = localManager.getVoteCount(Long.parseLong(text_pollIDInfo.getText()), 4);
-					System.out.println(votes[0]);
-					lblOption4.setText("Option 4: " + votes[3]);
-					
-					totalVotes = votes[0]+votes[1]+votes[2]+votes[3];
-					lblTotVotes.setText(""+totalVotes);
-					out.println(System.nanoTime() + " - Option 1: "+ votes[0] + " Option 2: " + votes[1] +
-							" Option 3: "+ votes[2] + " Option 4: " + votes[3] );
-					out.println(System.nanoTime() + " - Total Votes: "+ totalVotes);
-					out.println("------------END INFO-------------");
-
-				}
-				else
-				{
-					text_pollIDInfo.setText("Invalid Poll ID");
-					
-				}
+				getData();
 			}
 		});
 		btnGetVoteData.setBounds(10, 84, 89, 25);
@@ -295,18 +256,21 @@ public class Tester {
 			 *Creating Admin Button.
 			 *Creates an admin and connects it to the server.
 			 */
-			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				boolean valid;
+				long startTime, time;
 				valid = validateIP(1);	//Validates IP Address
 				
 				//Creates Admin.
 				if(valid == true)
 				{
+					startTime = System.nanoTime();
 					admins[numOfAdmins] = new AdminClient(server.PollServer.ADMIN_PORT, text_IPAddress.getText());
+					time = System.nanoTime() - startTime;
 					numOfAdmins++;
 					list_Admins.add("Admin " + numOfAdmins);
+					lblResponse.setText("Time to create an admin: " + time+ "ns");
 				}
 				
 			}
@@ -324,11 +288,14 @@ public class Tester {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				long pollID;
+				long startTime, time;
 				//Validate admin selection
 				if(list_Admins.getSelectionIndex() != -1)
 				{
+					startTime = System.nanoTime();
 					pollID = admins[list_Admins.getSelectionIndex()].createPoll("Test@test.com|Poll1|4|1|2|3|4");//Create Poll
-					
+					time = System.nanoTime() - startTime;
+					lblResponse.setText("Time to create an poll: " + time + "ns");
 					//Add poll to the list of polls for that admin.
 					for(int i = 0; i < POLLCAPACITY;i++)
 					{
@@ -366,15 +333,23 @@ public class Tester {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				boolean valid;
-				int counter = 0;
 				long pollID;
+				int votes[] = new int[4];
+				int previousVotes, totalVotes;
+				int numVotes;
 				Random generator = new Random();
 				
 				pollID = Long.parseLong(text_PollIDVote.getText());
 				valid = validateIP(0);	//Validate IP address
 				
 				if(valid == true)
-				{		
+				{	
+					votes[0] = localManager.getVoteCount(Long.parseLong(text_pollIDInfo.getText()), 1);
+					votes[1] = localManager.getVoteCount(Long.parseLong(text_pollIDInfo.getText()), 2);
+					votes[2] = localManager.getVoteCount(Long.parseLong(text_pollIDInfo.getText()), 3);
+					votes[3] = localManager.getVoteCount(Long.parseLong(text_pollIDInfo.getText()), 4);
+					previousVotes = votes[0] + votes[1] + votes[2] + votes[3];
+					numVotes = Integer.parseInt(text_NumOfVotes.getText());
 					out.println("-------------- Voting " + text_NumOfVotes.getText() +" times on poll " +
 							text_PollIDVote.getText() + " with concurrent votes = " + btnConcurrentVoting.getSelection() +
 								" and repeated votes = " + btnRepeatedVotes.getSelection() + " ---------------");
@@ -383,7 +358,7 @@ public class Tester {
 					if(btnConcurrentVoting.getSelection()== true)
 					{
 						//Creates numberOfVotes threads which will be clients that will vote concurrently.
-						for(int i = 0;i<Integer.parseInt(text_NumOfVotes.getText());i++)
+						for(int i = 0;i<numVotes;i++)
 						{
 							concurrVoters[i] = new voterClient(btnConcurrentVoting.getSelection(),btnRepeatedVotes.getSelection(),pollID,text_IPAddress.getText());
 							concurrVoters[i].start();
@@ -405,7 +380,7 @@ public class Tester {
 					{
 						out.println(System.nanoTime() + " ----- Non-concurrent votes -----");
 						int voteChoice;
-						for(int i = 0; i<Integer.parseInt(text_NumOfVotes.getText());i++)
+						for(int i = 0; i<numVotes;i++)
 						{
 							voteChoice = generator.nextInt(4)+1;//Generate random choice number
 							
@@ -415,11 +390,11 @@ public class Tester {
 							voters[i].vote(pollID, voteChoice);	//Vote
 						}
 						
-						//Non Concurrent repeated votes
+
 						if(btnRepeatedVotes.getSelection() == true)
 						{
 							out.println(System.nanoTime() + " ----- Non-concurrent repeated votes -----");
-							for(int i = 0; i<Integer.parseInt(text_NumOfVotes.getText());i++)
+							for(int i = 0; i<numVotes;i++)
 							{
 								voteChoice = generator.nextInt(4)+1;
 								out.println(System.nanoTime() + " - voter " + i + " repeated vote for choice " + voteChoice + 
@@ -427,13 +402,24 @@ public class Tester {
 								voters[i].vote(pollID, voteChoice);
 							}
 						}
+						for(int i = 0; i<numVotes;i++)
+						{
+							voters[i].close();
+						}
 					}
-					
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					totalVotes = getData();
+					lblDrop.setText( "" + (numVotes - (totalVotes-previousVotes)));
 				}
 			}
 		});
 		btnVote.setBounds(10, 70, 75, 25);
-		btnVote.setText("Vote");
+		btnVote.setText("Vote");	
 		
 	}
 	/**
@@ -491,8 +477,67 @@ public class Tester {
 				valid = false;
 			}
 		}
-		System.out.println(valid);
 		return valid;
+	}
+	public int getData(){
+		int votes[] = new int[4];
+		int totalVotes = 0;
+		boolean valid = true;
+		
+		// Validation of the pollID
+		try{
+			Long.parseLong(text_pollIDInfo.getText());
+			
+		}catch(NumberFormatException e)
+		{
+			valid = false;
+		}
+		if(valid==true)
+		{
+			valid = false;
+			for(int i = 0; i<ADMINCAPACITY;i++)
+			{
+				for(int b= 0; b<POLLCAPACITY;b++)
+				{
+					if(polls[i][b] == Long.parseLong(text_pollIDInfo.getText()))
+					{
+						valid = true;
+					}
+				}
+			}
+		}
+		//End of validation of the pollID
+		
+		//Gets the vote count for each option and displays the information accordingly.
+		if(valid == true)
+		{
+			out.println(" ---------Getting information for poll: " + text_pollIDInfo.getText() + "-------------");
+			votes[0] = localManager.getVoteCount(Long.parseLong(text_pollIDInfo.getText()), 1);
+			lblOption1.setText("Option 1: " + votes[0]);
+			
+			votes[1] = localManager.getVoteCount(Long.parseLong(text_pollIDInfo.getText()), 2);
+			lblOption2.setText("Option 2: " + votes[1]);
+			
+			votes[2] = localManager.getVoteCount(Long.parseLong(text_pollIDInfo.getText()), 3);
+			lblOption3.setText("Option 3: " + votes[2]);
+			
+			votes[3] = localManager.getVoteCount(Long.parseLong(text_pollIDInfo.getText()), 4);
+			lblOption4.setText("Option 4: " + votes[3]);
+			
+			totalVotes = votes[0]+votes[1]+votes[2]+votes[3];
+			lblTotVotes.setText(""+totalVotes);
+			out.println(System.nanoTime() + " - Option 1: "+ votes[0] + " Option 2: " + votes[1] +
+					" Option 3: "+ votes[2] + " Option 4: " + votes[3] );
+			out.println(System.nanoTime() + " - Total Votes: "+ totalVotes);
+			out.println("------------END INFO-------------");
+
+		}
+		else
+		{
+			text_pollIDInfo.setText("Invalid Poll ID");
+			
+		}
+	return totalVotes;
 	}
 }
 /*
@@ -526,6 +571,7 @@ class voterClient extends Thread
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		vote.vote(PollID, voteChoice);	//vote
 		//Repeated concurrent votes
 		if(repeat == true)
@@ -533,6 +579,7 @@ class voterClient extends Thread
 			voteChoice = generator.nextInt(4) + 1;
 			vote.vote(PollID, voteChoice);
 		}
+		vote.close();
 
 	}
 }

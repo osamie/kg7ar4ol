@@ -5,18 +5,15 @@ import static org.junit.Assert.*;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import model.Poll;
 import model.PollsManager;
 
 import server.PollServer;
 import client.AdminClient;
 import client.Client;
-import adminGUI.AdminGUI;
 
 
 public class Milestone3Testing {

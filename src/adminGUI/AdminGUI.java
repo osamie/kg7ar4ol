@@ -24,14 +24,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.custom.TableCursor;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Slider;
-
 import server.PollServer;
 import client.AdminClient;
 import org.eclipse.wb.swt.SWTResourceManager;
@@ -70,11 +64,6 @@ public class AdminGUI extends ApplicationWindow {
 		admin.disconnect();	//Disconnect once GUI is closed.	
 	}
 
-	
-	private Boolean verifyPollId()
-	{
-		return true;
-	}
 	private String getQuestion(String pollID)
 	{
 		for(int i = 0; i <pollInfoLength; i++ )

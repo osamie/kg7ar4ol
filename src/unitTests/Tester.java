@@ -1,3 +1,16 @@
+/*
+ * Group 4
+ * 
+ * Tester for Milestone 3 testing.
+ * Testing Environment GUI which allows custom tests involving sending concurrent, non-concurrent, and repeated votes.
+ * Also tracks drop rate and response rate.
+ * Allows creation of admins and polls for each admin.
+ * Can be ran on multiploe different machines concurrently.
+ * 
+ * Requirements:
+ * 		Server is running on a computer
+ * 		Server's IP address is entered into the correct textbox.
+ */
 package unitTests;
 
 import java.util.Random;
@@ -178,6 +191,9 @@ public class Tester {
 		lblTotVotes = new Label(grpData, SWT.NONE);
 		lblTotVotes.setBounds(136, 43, 55, 15);
 		
+		final Label lblStatus = new Label(grpVoting, SWT.NONE);
+		lblStatus.setBounds(20, 97, 55, 15);
+		
 		Label lblDropRate = new Label(grpData, SWT.NONE);
 		lblDropRate.setBounds(136, 64, 55, 15);
 		lblDropRate.setText("Drop Rate");
@@ -329,6 +345,8 @@ public class Tester {
 		btnVote.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * Vote Button 
+			 * Sends the amount of votes that is in the test_NumOfVotes textbox.
+			 * The votes can be concurrent, non-concurrent, repeated, non-repeated, or and combination of the previous.
 			 */
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -339,15 +357,17 @@ public class Tester {
 				int numVotes;
 				Random generator = new Random();
 				
-				pollID = Long.parseLong(text_PollIDVote.getText());
+				
 				valid = validateIP(0);	//Validate IP address
 				
 				if(valid == true)
 				{	
-					votes[0] = localManager.getVoteCount(Long.parseLong(text_pollIDInfo.getText()), 1);
-					votes[1] = localManager.getVoteCount(Long.parseLong(text_pollIDInfo.getText()), 2);
-					votes[2] = localManager.getVoteCount(Long.parseLong(text_pollIDInfo.getText()), 3);
-					votes[3] = localManager.getVoteCount(Long.parseLong(text_pollIDInfo.getText()), 4);
+					lblStatus.setText("Wait...");
+					pollID = Long.parseLong(text_PollIDVote.getText());
+					votes[0] = localManager.getVoteCount(pollID, 1);
+					votes[1] = localManager.getVoteCount(pollID, 2);
+					votes[2] = localManager.getVoteCount(pollID, 3);
+					votes[3] = localManager.getVoteCount(pollID, 4);
 					previousVotes = votes[0] + votes[1] + votes[2] + votes[3];
 					numVotes = Integer.parseInt(text_NumOfVotes.getText());
 					out.println("-------------- Voting " + text_NumOfVotes.getText() +" times on poll " +
@@ -408,24 +428,27 @@ public class Tester {
 						}
 					}
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(4000);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					totalVotes = getData();
 					lblDrop.setText( "" + (numVotes - (totalVotes-previousVotes)));
+					lblStatus.setText("Done");
 				}
 			}
 		});
 		btnVote.setBounds(10, 70, 75, 25);
 		btnVote.setText("Vote");	
 		
+		
+		
 	}
 	/**
 	 * Checks to see if the IP address is valid and it will ping the address to see if 
 	 * you can connect to that address.
-	 * parameters: int voteOrAdmin - 0 = voting, 1 = admin
+	 * @param int voteOrAdmin - 0 = voting, 1 = admin
 	 */
 	public boolean validateIP(int voteOrAdmin)
 	{
@@ -479,6 +502,9 @@ public class Tester {
 		}
 		return valid;
 	}
+	/**
+	 * Retrieves the poll votes from the pollID located in the text_pollIDInfo textbox.
+	 */
 	public int getData(){
 		int votes[] = new int[4];
 		int totalVotes = 0;

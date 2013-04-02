@@ -1,5 +1,8 @@
 package server;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import model.PollsManager;
 
 
@@ -12,7 +15,15 @@ public class PollServer {
 	private PollsManager pollsManager;
 
 	public PollServer() {
-		pollsManager = PollsManager.getInstance();
+		pollsManager = PollsManager.getInstance();		
+		InetAddress ip;
+		try {
+			ip = InetAddress.getLocalHost();
+			System.out.println("** Server IP address : " + ip.getHostAddress() + " **");
+		} catch (UnknownHostException e) {
+			System.err.println("Could not get server ip address");
+			e.printStackTrace();
+		}
 	}
 	
 	public void startListeners(){
